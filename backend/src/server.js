@@ -1438,13 +1438,14 @@ const server = http.createServer(async (req, res) => {
 });
 
 let currentPort = parseInt(process.env.PORT, 10) || 5050;
+const HOST = process.env.HOST || (process.env.RENDER ? '0.0.0.0' : undefined);
 
 function startServer(portToTry) {
-  server.listen(portToTry, () => {
+  const args = HOST ? [portToTry, HOST] : [portToTry];
+  server.listen(...args, () => {
     console.log(`=======================================================`);
     console.log(`🌱 EcoSense 5G Environmental Monitoring System Started`);
-    console.log(`📡 URL (Localhost): http://localhost:${portToTry}`);
-    console.log(`📡 URL (IPv4):      http://127.0.0.1:${portToTry}`);
+    console.log(`📡 Port: ${portToTry} | Host: ${HOST || 'All Interfaces'}`);
     console.log(`⚡ 5G Telemetry & Real-Time Stream Active`);
     console.log(`=======================================================`);
   });

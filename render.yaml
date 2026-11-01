@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ecosense-5g-monitoring
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: node backend/src/server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RENDER
+        value: "true"
