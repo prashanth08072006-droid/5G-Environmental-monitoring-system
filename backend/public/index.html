@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoSense 5G — Environmental Intelligence & Real-Time Monitoring Platform</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orangeBrand: '#FF6600',
+            orangeDeep: '#EA580C',
+            orangeLight: '#FFF7ED',
+            orangeBorder: '#FED7AA'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <style>
+    :root {
+      /* Primary Default Theme: High-Tech Orange & White with Black Text */
+      --bg-body: #FFFFFF;
+      --bg-sidebar: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FFF7ED;
+      --bg-inner: #FFF7ED;
+      --border-color: #FED7AA;
+      --border-focus: #EA580C;
+      --accent-primary: #EA580C;
+      --accent-secondary: #FF6600;
+      --accent-gradient: linear-gradient(135deg, #FF6600 0%, #EA580C 100%);
+      --text-main: #000000;
+      --text-muted: #18181B;
+      --glow-color: rgba(234, 88, 12, 0.22);
+    }
+
+    [data-theme="solar"] {
+      --bg-body: #FFFFFF;
+      --bg-sidebar: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FEF3C7;
+      --bg-inner: #FFFBEB;
+      --border-color: #FDE68A;
+      --border-focus: #D97706;
+      --accent-primary: #D97706;
+      --accent-secondary: #F59E0B;
+      --accent-gradient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      --text-main: #000000;
+      --text-muted: #18181B;
+      --glow-color: rgba(217, 119, 6, 0.22);
+    }
+
+    [data-theme="coral"] {
+      --bg-body: #FFFFFF;
+      --bg-sidebar: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FFF1F2;
+      --bg-inner: #FFF1F2;
+      --border-color: #FECDD3;
+      --border-focus: #E11D48;
+      --accent-primary: #E11D48;
+      --accent-secondary: #FF4D6D;
+      --accent-gradient: linear-gradient(135deg, #FF4D6D 0%, #E11D48 100%);
+      --text-main: #000000;
+      --text-muted: #18181B;
+      --glow-color: rgba(225, 29, 72, 0.22);
+    }
+
+    [data-theme="sunset"] {
+      --bg-body: #FFFFFF;
+      --bg-sidebar: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FFF7ED;
+      --bg-inner: #FFF7ED;
+      --border-color: #FED7AA;
+      --border-focus: #C2410C;
+      --accent-primary: #C2410C;
+      --accent-secondary: #EA580C;
+      --accent-gradient: linear-gradient(135deg, #EA580C 0%, #9A3412 100%);
+      --text-main: #000000;
+      --text-muted: #18181B;
+      --glow-color: rgba(194, 65, 12, 0.22);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: #000000 !important;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Strict Black Typography for Maximum Readability */
+    h1, h2, h3, h4, h5, h6 {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    p, span, label, td, th {
+      color: #000000;
+    }
+
+    .text-slate-400, .text-slate-500, .text-slate-600 {
+      color: #18181B !important;
+      font-weight: 500;
+    }
+    .text-slate-300, .text-slate-200, .text-slate-100 {
+      color: #000000 !important;
+    }
+    .text-slate-700, .text-slate-800, .text-slate-900 {
+      color: #000000 !important;
+    }
+
+    .bg-slate-800, .bg-slate-900, .bg-slate-950, .bg-slate-800\/60, .bg-slate-800\/40 {
+      background-color: #FED7AA !important;
+    }
+
+    input, select, textarea {
+      background-color: #FFFFFF !important;
+      color: #000000 !important;
+      border: 1.5px solid var(--border-color) !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #EA580C !important;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+    }
+
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Orange and White Themed Cards */
+    .themed-card {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid var(--border-color) !important;
+      box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      color: #000000 !important;
+    }
+    .themed-card:hover {
+      border-color: var(--border-focus) !important;
+      box-shadow: 0 10px 30px -4px rgba(234, 88, 12, 0.22);
+      background-color: var(--bg-card-hover) !important;
+    }
+
+    /* Crisp White Sidebar with Orange Border */
+    .themed-sidebar {
+      background-color: #FFFFFF !important;
+      border-right: 1.5px solid var(--border-color) !important;
+      box-shadow: 3px 0 20px rgba(234, 88, 12, 0.04);
+      color: #000000 !important;
+    }
+
+    /* Orange Inset Containers */
+    .themed-inner {
+      background-color: var(--bg-inner) !important;
+      border: 1.5px solid var(--border-color) !important;
+      color: #000000 !important;
+    }
+
+    /* Vibrant Orange Action Buttons */
+    .themed-gradient-btn {
+      background: var(--accent-gradient) !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      box-shadow: 0 4px 16px var(--glow-color);
+      border: none;
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .themed-gradient-btn:hover {
+      opacity: 0.94;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px var(--glow-color);
+    }
+    .themed-gradient-btn * {
+      color: #FFFFFF !important;
+    }
+
+    .themed-accent-text {
+      color: var(--accent-primary) !important;
+      font-weight: 800;
+    }
+
+    /* Navigation item active state */
+    .themed-nav-active {
+      background: #FFF7ED !important;
+      color: #EA580C !important;
+      border: 1.5px solid #EA580C !important;
+      box-shadow: 0 2px 12px rgba(234, 88, 12, 0.16) !important;
+      font-weight: 800 !important;
+    }
+    .themed-nav-active * {
+      color: #EA580C !important;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px var(--accent-primary)); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 18px var(--accent-primary)); }
+    }
+    .pulse-glow { animation: pulseGlow 1.8s infinite ease-in-out; }
+
+    /* Custom AQI Marker Pin with Crisp White Border & Black Text */
+    .aqi-marker-pin {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #FFFFFF; font-weight: 900; font-size: 11px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.3); border: 2.5px solid #FFFFFF;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .aqi-marker-pin:hover {
+      transform: scale(1.25) translateY(-3px);
+      box-shadow: 0 6px 20px rgba(234, 88, 12, 0.6);
+    }
+
+    /* Leaflet Popups: White background with Orange Border & Black Text */
+    .leaflet-popup-content-wrapper {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+      border-radius: 16px !important;
+      border: 2px solid #EA580C !important;
+      box-shadow: 0 12px 36px rgba(234, 88, 12, 0.25) !important;
+      padding: 6px !important;
+    }
+    .leaflet-popup-tip { background: #FFFFFF !important; }
+
+    /* Leaflet Container */
+    .leaflet-container {
+      width: 100% !important;
+      height: 100% !important;
+      background: #aad3df !important; /* Ocean Blue background for clear Indian peninsula definition */
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen selection:bg-orange-500 selection:text-white bg-white text-black">
+  
+  <div id="app" class="flex h-screen overflow-hidden bg-white">
+    <!-- Initial Loader -->
+    <div id="loader" class="flex-1 flex flex-col items-center justify-center p-6 text-center bg-white">
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-xl pulse-glow mb-4" style="background: var(--accent-gradient);">
+        ⚡
+      </div>
+      <h2 class="text-xl font-black text-black tracking-tight">EcoSense 5G Platform</h2>
+      <p class="text-xs text-black mt-1 font-mono font-bold">Synchronizing 5G Sub-6GHz Telemetry & CPCB NAQI Engine...</p>
+    </div>
+  </div>
+
+  <div id="modal-container"></div>
+
+  <script>
+    const API_BASE = '/api';
+
+    // Application State
+    let initialTheme = localStorage.getItem('ecosense_theme');
+    if (!initialTheme || ['cyber', 'sapphire', 'aurora', 'light'].includes(initialTheme)) {
+      initialTheme = 'orange';
+      localStorage.setItem('ecosense_theme', 'orange');
+    }
+
+    const state = {
+      theme: initialTheme,
+      currentTab: 'dashboard',
+      activeCityFilter: 'ALL',
+      devices: [],
+      locations: [],
+      summary: null,
+      currentAqiData: null,
+      networkStats: null,
+      alerts: [],
+      alertRules: [],
+      hotspots: [],
+      predictions: null,
+      liveStreamConnected: false,
+      lastSimulatedPacket: null,
+      currentUser: {
+        id: 'usr_admin',
+        name: 'Dr. Aarav Sharma',
+        role: 'ADMIN',
+        department: 'Central Environmental Board'
+      },
+      aiMessages: [
+        { sender: 'assistant', text: 'Greetings! I am **EcoSense AI**, connected directly to our 5G IoT environmental sensor network. Ask me about air quality, hotspots, 5G latency, or sensor health.' }
+      ],
+      selectedStation: null,
+      selectedStationHistory: [],
+      reportData: null,
+      leafletMap: null,
+      miniMap: null,
+      fullMapGroup: null,
+      miniMapGroup: null,
+      fullMapMarkers: {},
+      miniMapMarkers: {}
+    };
+
+    function applyTheme(themeKey) {
+      state.theme = themeKey;
+      localStorage.setItem('ecosense_theme', themeKey);
+      if (themeKey === 'orange') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeKey);
+      }
+      renderApp();
+    }
+
+    function getAqiBadge(aqi) {
+      if (aqi <= 50) return { label: 'Good', bg: 'bg-emerald-100 text-emerald-950 border border-emerald-400 font-black', color: '#10B981' };
+      if (aqi <= 100) return { label: 'Satisfactory', bg: 'bg-teal-100 text-teal-950 border border-teal-400 font-black', color: '#0D9488' };
+      if (aqi <= 200) return { label: 'Moderate', bg: 'bg-amber-100 text-amber-950 border border-amber-400 font-black', color: '#D97706' };
+      if (aqi <= 300) return { label: 'Poor', bg: 'bg-orange-100 text-orange-950 border border-orange-500 font-black', color: '#EA580C' };
+      if (aqi <= 400) return { label: 'Very Poor', bg: 'bg-rose-100 text-rose-950 border border-rose-400 font-black', color: '#E11D48' };
+      return { label: 'Severe', bg: 'bg-purple-100 text-purple-950 border border-purple-400 font-black', color: '#9333EA' };
+    }
+
+    async function fetchAllData() {
+      try {
+        const [devsRes, locsRes, aqiRes, sumRes, netRes, altRes, rulesRes, hotRes, predRes] = await Promise.all([
+          fetch(`${API_BASE}/devices`).then(r => r.json()),
+          fetch(`${API_BASE}/locations`).then(r => r.json()),
+          fetch(`${API_BASE}/aqi/current`).then(r => r.json()),
+          fetch(`${API_BASE}/analytics/summary`).then(r => r.json()),
+          fetch(`${API_BASE}/network/stats`).then(r => r.json()),
+          fetch(`${API_BASE}/alerts`).then(r => r.json()),
+          fetch(`${API_BASE}/alerts/rules`).then(r => r.json()),
+          fetch(`${API_BASE}/analytics/hotspots`).then(r => r.json()),
+          fetch(`${API_BASE}/predictions`).then(r => r.json())
+        ]);
+
+        state.devices = devsRes;
+        state.locations = locsRes;
+        state.currentAqiData = aqiRes;
+        state.summary = sumRes;
+        state.networkStats = netRes;
+        state.alerts = altRes;
+        state.alertRules = rulesRes;
+        state.hotspots = hotRes;
+        state.predictions = predRes;
+        renderApp();
+      } catch (err) {
+        console.error('Fetch error:', err);
+        renderError('Failed to connect to EcoSense 5G backend API.');
+      }
+    }
+
+    // Connect SSE Stream with Live Map Simulation
+    function initSSE() {
+      try {
+        const eventSource = new EventSource(`${API_BASE}/stream`);
+        eventSource.onopen = () => {
+          state.liveStreamConnected = true;
+          updateLivePill();
+        };
+        eventSource.onmessage = (event) => {
+          try {
+            const parsed = JSON.parse(event.data);
+            if (parsed.type === 'TELEMETRY_PACKET') {
+              const { measurement, device } = parsed.data;
+              state.lastSimulatedPacket = { measurement, device };
+
+              const idx = state.devices.findIndex(d => d.deviceId === device.deviceId);
+              if (idx !== -1) {
+                state.devices[idx] = { ...state.devices[idx], ...device, latestMeasurement: measurement };
+              }
+
+              // Update Dashboard live elements
+              if (state.currentTab === 'dashboard') {
+                updateDashboardLiveElements(measurement, device);
+              }
+
+              // Update Map Markers with Live Ping Simulation
+              updateMapLiveMarker(measurement, device);
+              updateMapSimulationTicker(measurement, device);
+
+            } else if (parsed.type === 'NEW_ALERT') {
+              state.alerts.unshift(parsed.data);
+              renderApp();
+            } else if (parsed.type === 'ALERT_RESOLVED') {
+              const alt = state.alerts.find(a => a.id === parsed.data.id);
+              if (alt) alt.status = 'RESOLVED';
+              renderApp();
+            }
+          } catch (e) {
+            console.error('SSE packet parse error:', e);
+          }
+        };
+        eventSource.onerror = () => {
+          state.liveStreamConnected = false;
+          updateLivePill();
+        };
+      } catch (e) {
+        console.warn('SSE unsupported:', e);
+      }
+    }
+
+    // Live Map Simulation Pin Animation
+    function updateMapLiveMarker(meas, dev) {
+      const badge = getAqiBadge(meas.aqi);
+      const loc = state.locations.find(l => l.id === dev.locationId);
+
+      // Mini map marker update
+      if (state.miniMapMarkers[dev.deviceId]) {
+        const m = state.miniMapMarkers[dev.deviceId];
+        m.setIcon(L.divIcon({
+          className: 'custom-aqi-icon',
+          html: `<div class="aqi-marker-pin pulse-glow" style="background-color: ${badge.color}; box-shadow: 0 0 25px ${badge.color};">${meas.aqi}</div>`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18]
+        }));
+        setTimeout(() => {
+          m.setIcon(L.divIcon({
+            className: 'custom-aqi-icon',
+            html: `<div class="aqi-marker-pin" style="background-color: ${badge.color}">${meas.aqi}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+          }));
+        }, 1800);
+      }
+
+      // Fullscreen map marker update
+      if (state.fullMapMarkers[dev.deviceId]) {
+        const m = state.fullMapMarkers[dev.deviceId];
+        m.setIcon(L.divIcon({
+          className: 'custom-aqi-icon',
+          html: `<div class="aqi-marker-pin pulse-glow" style="background-color: ${badge.color}; box-shadow: 0 0 30px ${badge.color}; transform: scale(1.25);">${meas.aqi}</div>`,
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
+        }));
+
+        m.setPopupContent(buildPopupHtml(dev, loc, meas, badge));
+
+        setTimeout(() => {
+          m.setIcon(L.divIcon({
+            className: 'custom-aqi-icon',
+            html: `<div class="aqi-marker-pin" style="background-color: ${badge.color}; box-shadow: 0 0 16px ${badge.color}aa;">${meas.aqi}</div>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+          }));
+        }, 1800);
+      }
+    }
+
+    function updateMapSimulationTicker(meas, dev) {
+      const ticker = document.getElementById('map-simulation-ticker');
+      if (ticker) {
+        const loc = state.locations.find(l => l.id === dev.locationId);
+        const badge = getAqiBadge(meas.aqi);
+        ticker.innerHTML = `
+          <div class="flex items-center space-x-2 text-xs font-mono text-black">
+            <span class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
+            <span class="text-black font-semibold">Live 5G Ingest:</span>
+            <strong class="text-black font-black">${dev.deviceId} (${loc?.city || 'Metro'})</strong>
+            <span class="text-orange-500 font-bold">→</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-black ${badge.bg}">AQI ${meas.aqi} (${badge.label})</span>
+            <span class="text-orange-300">|</span>
+            <span class="text-black font-semibold">PM2.5: <strong class="text-black font-black">${meas.pm25}</strong> µg/m³</span>
+            <span class="text-orange-300">|</span>
+            <span class="text-[#EA580C] font-black">${dev.latencyMs} ms URLLC</span>
+          </div>
+        `;
+      }
+    }
+
+    function buildPopupHtml(dev, loc, meas, badge) {
+      return `
+        <div style="font-family: inherit; padding: 6px; min-width: 220px; color: #000000; background: #FFFFFF;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-weight: 900; font-size: 14px; color: #000000;">${loc?.name || dev.name}</span>
+            <span style="background: #FFF7ED; color: #EA580C; border: 1.5px solid #FED7AA; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 9999px;">5G URLLC</span>
+          </div>
+          <div style="font-size: 11px; color: #18181B; font-weight: 600; margin-bottom: 8px;">${dev.deviceId} • ${loc?.city || 'Metro'} (${loc?.type || 'Sector'})</div>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; background: #FFF7ED; border: 1.5px solid #FED7AA; padding: 10px; border-radius: 12px;">
+            <span style="font-size: 30px; font-weight: 900; color: #000000; font-family: monospace;">${meas.aqi || 85}</span>
+            <span style="font-size: 11px; font-weight: 900; color: ${badge.color}; text-transform: uppercase; background: #FFFFFF; padding: 3px 8px; border-radius: 8px; border: 1px solid #FED7AA;">${badge.label}</span>
+          </div>
+          <div style="font-size: 11px; border-top: 1.5px solid #FED7AA; padding-top: 8px; line-height: 1.7; color: #000000;">
+            PM2.5: <b style="color: #000000;">${meas.pm25 || '--'} µg/m³</b> | PM10: <b style="color: #000000;">${meas.pm10 || '--'} µg/m³</b><br/>
+            Temp: <b style="color: #000000;">${meas.temperature || '--'}°C</b> | 5G Latency: <b style="color: #EA580C; font-weight: 900;">${dev.latencyMs}ms</b>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateLivePill() {
+      const pill = document.getElementById('live-stream-pill');
+      if (pill) {
+        pill.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full ${state.liveStreamConnected ? 'bg-orange-500 animate-ping' : 'bg-amber-500'} mr-2"></span>
+          <span class="font-mono text-[11px] font-bold text-black">${state.liveStreamConnected ? '5G Telemetry Active' : 'Connecting...'}</span>
+        `;
+      }
+    }
+
+    function updateDashboardLiveElements(meas, dev) {
+      const el = document.getElementById(`sensor-item-${dev.deviceId}`);
+      if (el) {
+        const badge = getAqiBadge(meas.aqi);
+        const bEl = el.querySelector('.aqi-badge-slot');
+        if (bEl) {
+          bEl.className = `px-2 py-0.5 rounded text-[10px] font-mono font-bold aqi-badge-slot ${badge.bg}`;
+          bEl.innerText = `AQI ${meas.aqi}`;
+        }
+        const pEl = el.querySelector('.pm25-slot');
+        if (pEl) pEl.innerText = meas.pm25;
+      }
+    }
+
+    function switchRole(role) {
+      const roles = {
+        ADMIN: { id: 'usr_admin', name: 'Dr. Aarav Sharma', role: 'ADMIN', department: 'Central Environmental Board' },
+        OFFICER: { id: 'usr_officer', name: 'Priya Narayanan', role: 'ENVIRONMENT_OFFICER', department: 'Air Quality Monitoring Cell' },
+        RESEARCHER: { id: 'usr_researcher', name: 'Prof. K. Venkatesh', role: 'RESEARCHER', department: 'Atmospheric Physics Lab' },
+        VIEWER: { id: 'usr_viewer', name: 'Public Citizen', role: 'VIEWER', department: 'Smart City Resident' }
+      };
+      state.currentUser = roles[role] || roles.ADMIN;
+      renderApp();
+    }
+
+    function setTab(tab) {
+      state.currentTab = tab;
+      renderApp();
+    }
+
+    function setCityFilter(city) {
+      state.activeCityFilter = city;
+      renderApp();
+    }
+
+    // Render App Main View
+    function renderApp() {
+      const app = document.getElementById('app');
+      if (!app) return;
+
+      const filteredDevices = state.activeCityFilter === 'ALL'
+        ? state.devices
+        : state.devices.filter(d => {
+            const loc = state.locations.find(l => l.id === d.locationId);
+            return loc && loc.city === state.activeCityFilter;
+          });
+
+      const activeAlertsCount = state.alerts.filter(a => a.status === 'ACTIVE').length;
+
+      app.innerHTML = `
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 themed-sidebar flex flex-col justify-between shrink-0 select-none">
+          <div>
+            <!-- Brand -->
+            <div class="p-5 border-b border-[var(--border-color)] flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold shadow-lg pulse-glow" style="background: var(--accent-gradient);">
+                  ⚡
+                </div>
+                <div>
+                  <h1 class="font-black text-base tracking-tight flex items-center space-x-1 text-black">
+                    <span class="text-black">EcoSense</span>
+                    <span class="font-mono text-sm themed-accent-text">5G</span>
+                  </h1>
+                  <p class="text-[10px] text-black uppercase tracking-widest font-black">Environmental AI</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5G Status -->
+            <div class="mx-4 my-3 px-3.5 py-2.5 rounded-xl themed-inner flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full ${state.liveStreamConnected ? 'bg-orange-500 pulse-glow' : 'bg-amber-500'}"></span>
+                <span class="font-black text-xs text-black">5G SA URLLC</span>
+              </div>
+              <span class="font-mono font-black text-[11px] themed-accent-text">${state.networkStats?.averageLatencyMs || 12} ms</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-3 space-y-1">
+              ${[
+                { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+                { id: 'map', label: 'Live Map', icon: '🗺' },
+                { id: 'sensors', label: 'Sensors & Fleet', icon: '📡', badge: state.devices.length },
+                { id: 'analytics', label: 'Analytics & Trends', icon: '📊' },
+                { id: 'comparison', label: 'Station Compare', icon: '⚖' },
+                { id: 'network', label: '5G Performance', icon: '📶' },
+                { id: 'alerts', label: 'Pollution Alerts', icon: '⚠', badge: activeAlertsCount, badgeColor: 'bg-orange-600 text-white' },
+                { id: 'reports', label: 'Reports & Export', icon: '📈' },
+                { id: 'predictions', label: 'Predictions & AI', icon: '🤖' },
+                { id: 'users', label: 'Access Control', icon: '👥' },
+                { id: 'settings', label: 'Settings & Health', icon: '⚙' }
+              ].map(item => `
+                <button
+                  onclick="setTab('${item.id}')"
+                  class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm transition-all ${
+                    state.currentTab === item.id
+                      ? 'themed-nav-active font-black'
+                      : 'text-black hover:text-[#EA580C] hover:bg-orange-50 font-bold'
+                  }"
+                >
+                  <div class="flex items-center space-x-3">
+                    <span class="text-sm">${item.icon}</span>
+                    <span class="${state.currentTab === item.id ? 'themed-accent-text' : 'text-black'}">${item.label}</span>
+                  </div>
+                  ${item.badge !== undefined && item.badge > 0 ? `
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full ${item.badgeColor || 'bg-orange-100 text-[#EA580C] border border-orange-200 font-black'}">
+                      ${item.badge}
+                    </span>
+                  ` : ''}
+                </button>
+              `).join('')}
+            </nav>
+          </div>
+
+          <!-- User Card -->
+          <div class="p-4 border-t border-[var(--border-color)]">
+            <div class="flex items-center space-x-2.5 mb-2">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs" style="background: #FFF7ED; color: var(--accent-primary); border: 1.5px solid var(--border-color);">
+                ${state.currentUser.name.charAt(0)}
+              </div>
+              <div class="truncate">
+                <p class="text-xs font-black truncate text-black">${state.currentUser.name}</p>
+                <p class="text-[10px] font-mono uppercase themed-accent-text font-black">${state.currentUser.role.replace('_', ' ')}</p>
+              </div>
+            </div>
+
+            <!-- Role Switcher -->
+            <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-[10px] text-black">
+              <span class="font-bold text-black">Demo Role:</span>
+              <div class="flex space-x-1">
+                ${['ADMIN', 'OFFICER', 'VIEWER'].map(r => `
+                  <button
+                    onclick="switchRole('${r}')"
+                    class="px-2 py-0.5 rounded font-black ${state.currentUser.role.includes(r) ? 'themed-gradient-btn !text-white' : 'hover:bg-orange-100 text-black border border-orange-200'}"
+                  >
+                    ${r.slice(0, 3)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-white">
+          <!-- Top Bar -->
+          <header class="h-16 border-b border-[var(--border-color)] bg-white sticky top-0 z-30 px-6 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <h2 class="text-base font-black flex items-center space-x-2 tracking-tight text-black">
+                <span class="capitalize text-black">${state.currentTab}</span>
+                <span class="text-xs text-orange-400 font-bold">/</span>
+                <span class="text-xs font-bold text-black">CPCB Environmental Grid</span>
+              </h2>
+
+              <!-- City Selector -->
+              <div class="hidden lg:flex items-center space-x-1 ml-4 themed-inner p-1 rounded-xl text-xs">
+                ${['ALL', 'Bengaluru', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai'].map(city => `
+                  <button
+                    onclick="setCityFilter('${city}')"
+                    class="px-3 py-1 rounded-lg transition-all font-black ${
+                      state.activeCityFilter === city ? 'themed-gradient-btn !text-white shadow-sm' : 'text-black hover:text-[#EA580C] hover:bg-orange-100/60'
+                    }"
+                  >
+                    ${city}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <!-- Palette Selector -->
+              <div class="flex items-center space-x-1.5 themed-inner px-2 py-1 rounded-xl text-xs">
+                <span class="text-[10px] font-black text-black mr-1">Orange Palette:</span>
+                ${[
+                  { id: 'orange', name: 'Pure Orange & White', dot: 'bg-orange-500' },
+                  { id: 'solar', name: 'Solar Amber & White', dot: 'bg-amber-500' },
+                  { id: 'coral', name: 'Coral Flame & White', dot: 'bg-rose-500' },
+                  { id: 'sunset', name: 'Sunset Deep Orange', dot: 'bg-orange-700' }
+                ].map(t => `
+                  <button
+                    onclick="applyTheme('${t.id}')"
+                    title="${t.name}"
+                    class="w-5 h-5 rounded-full ${t.dot} flex items-center justify-center border-2 ${state.theme === t.id ? 'border-black scale-110 shadow-md' : 'border-white opacity-70 hover:opacity-100'} transition-all"
+                  ></button>
+                `).join('')}
+              </div>
+
+              <!-- Live Stream Status -->
+              <div id="live-stream-pill" class="flex items-center px-3 py-1.5 rounded-full themed-inner text-xs font-bold text-black">
+                <span class="w-2.5 h-2.5 rounded-full ${state.liveStreamConnected ? 'bg-orange-500 animate-ping' : 'bg-amber-500'} mr-2"></span>
+                <span class="font-mono text-[11px] font-bold text-black">${state.liveStreamConnected ? '5G Telemetry Active' : 'Connecting...'}</span>
+              </div>
+
+              <!-- Notifications -->
+              <button
+                onclick="setTab('alerts')"
+                class="relative p-2 rounded-xl themed-inner hover:bg-orange-50 transition-colors text-black"
+              >
+                <span>🔔</span>
+                ${activeAlertsCount > 0 ? `
+                  <span class="absolute -top-1 -right-1 w-4 h-4 bg-orange-600 text-white rounded-full text-[9px] flex items-center justify-center font-black">
+                    ${activeAlertsCount}
+                  </span>
+                ` : ''}
+              </button>
+
+              ${state.currentUser.role === 'ADMIN' ? `
+                <button
+                  onclick="openAddDeviceModal()"
+                  class="flex items-center space-x-1.5 px-4 py-2 rounded-xl themed-gradient-btn text-xs shadow-md font-black"
+                >
+                  <span class="font-bold">+</span>
+                  <span>Deploy 5G Node</span>
+                </button>
+              ` : ''}
+            </div>
+          </header>
+
+              <!-- Live Stream Status -->
+              <div id="live-stream-pill" class="flex items-center px-3 py-1.5 rounded-full themed-inner text-xs">
+                <span class="w-2 h-2 rounded-full ${state.liveStreamConnected ? 'bg-cyan-400 animate-ping' : 'bg-amber-400'} mr-2"></span>
+                <span class="font-mono text-[11px]">${state.liveStreamConnected ? '5G Telemetry Active' : 'Connecting...'}</span>
+              </div>
+
+              <!-- Notifications -->
+              <button
+                onclick="setTab('alerts')"
+                class="relative p-2 rounded-xl themed-inner hover:opacity-80 transition-opacity"
+              >
+                <span>🔔</span>
+                ${activeAlertsCount > 0 ? `
+                  <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] flex items-center justify-center font-bold">
+                    ${activeAlertsCount}
+                  </span>
+                ` : ''}
+              </button>
+
+              ${state.currentUser.role === 'ADMIN' ? `
+                <button
+                  onclick="openAddDeviceModal()"
+                  class="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl themed-gradient-btn text-xs shadow-lg"
+                >
+                  <span>+</span>
+                  <span>Deploy 5G Node</span>
+                </button>
+              ` : ''}
+            </div>
+          </header>
+
+          <!-- Tab Content Views -->
+          <div class="p-6">
+            ${renderTabContent(filteredDevices)}
+          </div>
+        </main>
+      `;
+
+      if (state.currentTab === 'dashboard') {
+        initMiniMap();
+      } else if (state.currentTab === 'map') {
+        initFullScreenMap(filteredDevices);
+      }
+    }
+
+    function renderError(msg) {
+      const app = document.getElementById('app');
+      if (app) {
+        app.innerHTML = `
+          <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <span class="text-4xl mb-3">⚠️</span>
+            <h2 class="text-base font-bold">Connection Error</h2>
+            <p class="text-xs text-slate-400 mt-1 max-w-md">${msg}</p>
+            <button onclick="fetchAllData()" class="mt-4 px-4 py-2 rounded-xl themed-gradient-btn text-xs">
+              Retry Connection
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function renderTabContent(devices) {
+      if (state.currentTab === 'dashboard') return renderDashboardView(devices);
+      if (state.currentTab === 'map') return renderMapView(devices);
+      if (state.currentTab === 'sensors') return renderSensorsView(devices);
+      if (state.currentTab === 'analytics') return renderAnalyticsView();
+      if (state.currentTab === 'comparison') return renderComparisonView();
+      if (state.currentTab === 'network') return renderNetworkView();
+      if (state.currentTab === 'alerts') return renderAlertsView();
+      if (state.currentTab === 'reports') return renderReportsView();
+      if (state.currentTab === 'predictions') return renderPredictionsView();
+      if (state.currentTab === 'users') return renderUsersView();
+      if (state.currentTab === 'settings') return renderSettingsView();
+      return renderDashboardView(devices);
+    }
+
+    // ----------------------------------------------------
+    // TAB: DASHBOARD VIEW
+    // ----------------------------------------------------
+    function renderDashboardView(devices) {
+      const aqi = state.currentAqiData?.averageAQI || 148;
+      const badge = getAqiBadge(aqi);
+
+      return `
+        <div class="space-y-6">
+          <!-- Top Row KPI Cards -->
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            
+            <!-- AQI Hero Card -->
+            <div class="p-6 rounded-3xl themed-card relative overflow-hidden flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Metro Average AQI</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold themed-inner">CPCB NAQI</span>
+              </div>
+              <div class="my-4">
+                <div class="flex items-baseline space-x-3">
+                  <span class="text-5xl font-black tracking-tight font-mono">${aqi}</span>
+                  <span class="px-3 py-1 rounded-xl text-xs font-bold uppercase ${badge.bg}">
+                    ${badge.label}
+                  </span>
+                </div>
+                <p class="mt-2 text-xs text-slate-400 leading-relaxed">
+                  ${state.currentAqiData?.healthAdvisory || 'Air quality is moderately polluted. Sensitive individuals should limit prolonged outdoor exposure.'}
+                </p>
+              </div>
+              <div class="pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-slate-400">
+                <span>Prominent: <strong class="themed-accent-text">PM2.5</strong></span>
+                <span>Active Nodes: <strong>${state.currentAqiData?.totalActiveSensors || 11}/${state.devices.length}</strong></span>
+              </div>
+            </div>
+
+            <!-- PM2.5 Card -->
+            <div class="p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-400">PM2.5 Particulate</span>
+                <span class="text-[10px] font-mono font-bold themed-accent-text">24-hr Mean</span>
+              </div>
+              <div class="my-2">
+                <span class="text-3xl font-extrabold font-mono">${state.summary?.pm25 || 68.4}</span>
+                <span class="text-xs text-slate-400 ml-1.5 font-mono">µg/m³</span>
+              </div>
+              <div class="w-full bg-slate-800/60 h-2 rounded-full overflow-hidden">
+                <div class="h-full rounded-full" style="background: var(--accent-gradient); width: ${Math.min(100, ((state.summary?.pm25 || 68) / 120) * 100)}%"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-mono">
+                <span>Standard: 60 µg/m³</span>
+                <span class="text-amber-400 font-semibold">+14% Elev.</span>
+              </div>
+            </div>
+
+            <!-- Temperature & Humidity -->
+            <div class="p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-400">Ambient Meteorology</span>
+                <span class="text-sm">⛅</span>
+              </div>
+              <div class="my-2 flex items-baseline justify-between">
+                <div>
+                  <span class="text-3xl font-extrabold font-mono">${state.summary?.temperature || 28.4}</span>
+                  <span class="text-xs text-slate-400 ml-1 font-mono">°C</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-xl font-bold font-mono themed-accent-text">${state.summary?.humidity || 62.1}%</span>
+                  <p class="text-[10px] text-slate-400 font-sans">Relative Humidity</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-2 border-t border-[var(--border-color)] font-mono">
+                <div>Pressure: <strong>${state.summary?.pressure || 1011} hPa</strong></div>
+                <div>Wind: <strong>${state.summary?.windSpeed || 4.2} m/s</strong></div>
+              </div>
+            </div>
+
+            <!-- 5G Network Latency -->
+            <div class="p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-400">5G Fleet URLLC</span>
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold" style="background: rgba(0, 242, 254, 0.15); color: var(--accent-primary);">3GPP Rel-16</span>
+              </div>
+              <div class="my-2 flex items-baseline justify-between">
+                <div>
+                  <span class="text-3xl font-extrabold font-mono themed-accent-text">${state.networkStats?.averageLatencyMs || 12}</span>
+                  <span class="text-xs text-slate-400 ml-1 font-mono">ms</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-lg font-bold font-mono">${state.networkStats?.downloadSpeedMbps || 119}</span>
+                  <span class="text-[10px] text-slate-400 block font-mono">Mbps Down</span>
+                </div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-400 pt-2 border-t border-[var(--border-color)] font-mono">
+                <span>Loss: <strong class="themed-accent-text">${state.networkStats?.packetLossPct || 0.12}%</strong></span>
+                <span>Uptime: <strong class="themed-accent-text">99.94%</strong></span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Middle Section: Mini Map & Active Violations -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Mini Map -->
+            <div class="lg:col-span-2 p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                  <span class="themed-accent-text text-base">🗺</span>
+                  <h3 class="font-black text-sm tracking-tight text-black">National Environmental Grid — India</h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <div class="flex items-center space-x-1 text-[11px] themed-inner p-1 rounded-xl">
+                    <button onclick="setMiniMapLayer('osm')" id="btn-mini-osm" class="px-2 py-0.5 rounded font-black themed-gradient-btn !text-white text-[10px]">Map</button>
+                    <button onclick="setMiniMapLayer('satellite')" id="btn-mini-sat" class="px-2 py-0.5 rounded font-bold text-black hover:bg-orange-100 text-[10px]">Satellite</button>
+                  </div>
+                  <button onclick="fitMiniMapBounds()" class="px-3 py-1 rounded-xl themed-inner text-xs font-black text-black hover:bg-orange-100 border border-orange-300">
+                    🇮🇳 Full India
+                  </button>
+                  <button onclick="setTab('map')" class="px-3 py-1 rounded-xl themed-gradient-btn !text-white text-xs font-black shadow-sm">
+                    Live Map →
+                  </button>
+                </div>
+              </div>
+
+              <!-- Map Container -->
+              <div class="h-[430px] w-full rounded-2xl overflow-hidden border-2 border-[var(--border-color)] relative z-10 shadow-md">
+                <div id="mini-map-container" class="w-full h-full"></div>
+              </div>
+
+              <div class="mt-3 flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-3 border-t border-[var(--border-color)]">
+                <div class="flex items-center space-x-3">
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Good</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span><span>Satisfactory</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span>Moderate</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span><span>Poor</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>Severe</span></span>
+                </div>
+                <span class="font-mono text-cyan-400 font-bold">${devices.length} Nodes In Field</span>
+              </div>
+            </div>
+
+            <!-- Active Pollution Alerts -->
+            <div class="p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-rose-400">⚠</span>
+                    <h3 class="font-bold text-sm tracking-tight">Active Violations & Alerts</h3>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-lg bg-rose-500/20 text-rose-400 font-mono text-[10px] font-bold">
+                    ${state.alerts.filter(a => a.status === 'ACTIVE').length} Active
+                  </span>
+                </div>
+
+                <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                  ${state.alerts.slice(0, 4).map(alert => `
+                    <div class="p-3 rounded-2xl themed-inner">
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-bold truncate">${alert.locationName}</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold ${
+                          alert.severity === 'EMERGENCY' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'
+                        }">
+                          ${alert.severity}
+                        </span>
+                      </div>
+                      <p class="text-[11px] text-slate-400 leading-tight">${alert.message}</p>
+                      <div class="mt-2 flex items-center justify-between text-[10px] font-mono text-slate-500">
+                        <span>Device: ${alert.deviceId}</span>
+                        <span>${new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-[var(--border-color)] mt-3 flex items-center justify-between">
+                <button onclick="setTab('alerts')" class="text-xs font-semibold themed-accent-text hover:underline">
+                  Manage alert rules →
+                </button>
+                <button onclick="setTab('reports')" class="px-3 py-1.5 rounded-xl themed-inner text-xs font-medium hover:opacity-80">
+                  Export Incident Log
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Row: Distributed Sensor Fleet Grid -->
+          <div class="p-5 rounded-3xl themed-card">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold text-sm tracking-tight">Live 5G IoT Sensor Fleet Feed</h3>
+                <p class="text-xs text-slate-400">Streamed via 3GPP Rel-16 Sub-6GHz cellular uplink</p>
+              </div>
+              <button onclick="setTab('sensors')" class="text-xs font-semibold themed-accent-text hover:underline">
+                View all ${devices.length} sensors →
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              ${devices.slice(0, 8).map(dev => {
+                const loc = state.locations.find(l => l.id === dev.locationId);
+                const meas = dev.latestMeasurement || {};
+                const badge = getAqiBadge(meas.aqi || 85);
+
+                return `
+                  <div
+                    id="sensor-item-${dev.deviceId}"
+                    onclick="openStationDeepDive('${dev.deviceId}')"
+                    class="p-3.5 rounded-2xl themed-inner cursor-pointer transition-all flex flex-col justify-between hover:scale-[1.02]"
+                  >
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="truncate">
+                        <span class="text-xs font-bold truncate block">${loc?.name || dev.name}</span>
+                        <span class="text-[10px] text-slate-500 font-mono">${dev.deviceId} • ${loc?.city || 'Metro'}</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold aqi-badge-slot ${badge.bg}">
+                        AQI ${meas.aqi || 85}
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-1 text-[11px] my-1.5 font-mono">
+                      <div>
+                        <span class="text-[9px] text-slate-500 block">PM2.5</span>
+                        <span class="font-semibold pm25-slot">${meas.pm25 || '--'}</span>
+                      </div>
+                      <div>
+                        <span class="text-[9px] text-slate-500 block">TEMP</span>
+                        <span class="font-semibold">${meas.temperature || '--'}°C</span>
+                      </div>
+                      <div>
+                        <span class="text-[9px] text-slate-500 block">5G LAT</span>
+                        <span class="font-semibold themed-accent-text">${dev.latencyMs}ms</span>
+                      </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-[10px] text-slate-500">
+                      <span class="flex items-center space-x-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                        <span>${dev.networkType.split(' ')[0]}</span>
+                      </span>
+                      <span>${new Date(dev.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const INDIA_BOUNDS = [
+      [7.5, 67.5],  // Southwest corner (below Kanyakumari)
+      [36.5, 98.0]  // Northeast corner (Kashmir / Arunachal)
+    ];
+
+    const INDIA_BORDER = [
+      [35.5, 76.8], [35.7, 77.5], [34.5, 78.5], [32.5, 79.0], [31.5, 78.5],
+      [30.5, 81.0], [29.5, 80.5], [28.5, 80.2], [27.5, 88.0], [27.8, 88.9],
+      [27.0, 89.8], [28.2, 96.5], [27.0, 97.2], [26.0, 96.5], [24.0, 94.0],
+      [22.0, 92.5], [21.5, 89.0], [21.0, 87.0], [19.5, 85.0], [17.5, 83.0],
+      [15.5, 80.2], [13.0, 80.3], [10.5, 79.8], [9.2, 79.0], [8.08, 77.55],
+      [8.5, 76.9], [10.0, 76.1], [12.0, 75.1], [15.0, 73.8], [19.0, 72.8],
+      [21.0, 72.5], [20.5, 70.0], [22.0, 69.0], [23.5, 68.3], [24.5, 68.8],
+      [24.5, 71.0], [27.0, 71.5], [29.5, 72.5], [32.0, 74.5], [33.5, 74.0],
+      [34.5, 74.5], [35.5, 76.8]
+    ];
+
+    function initMiniMap() {
+      const container = document.getElementById('mini-map-container');
+      if (!container || typeof L === 'undefined') return;
+
+      if (state.miniMap) {
+        state.miniMap.remove();
+        state.miniMap = null;
+      }
+
+      state.miniMap = L.map(container, {
+        center: [22.5, 79.5],
+        zoom: 5,
+        minZoom: 4,
+        maxZoom: 18,
+        zoomControl: true,
+        attributionControl: false
+      });
+
+      // Rich, fully visible OpenStreetMap tiles (clear borders, blue oceans, green/tan land)
+      state.miniMapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        subdomains: ['a', 'b', 'c']
+      }).addTo(state.miniMap);
+
+      // Prominent Orange Boundary Outline of India
+      L.polygon(INDIA_BORDER, {
+        color: '#EA580C',
+        weight: 3,
+        opacity: 0.9,
+        fillColor: '#FF6600',
+        fillOpacity: 0.05,
+        dashArray: '8, 6'
+      }).addTo(state.miniMap);
+
+      state.miniMapGroup = L.featureGroup();
+      state.miniMapMarkers = {};
+
+      state.devices.forEach(dev => {
+        const loc = state.locations.find(l => l.id === dev.locationId);
+        if (!loc || !loc.latitude || !loc.longitude) return;
+
+        const aqi = dev.latestMeasurement?.aqi || 85;
+        const badge = getAqiBadge(aqi);
+
+        const icon = L.divIcon({
+          className: 'custom-aqi-icon',
+          html: `<div class="aqi-marker-pin" style="background-color: ${badge.color}">${aqi}</div>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+
+        const m = L.marker([loc.latitude, loc.longitude], { icon });
+        m.on('click', () => openStationDeepDive(dev.deviceId));
+        state.miniMapGroup.addLayer(m);
+        state.miniMapMarkers[dev.deviceId] = m;
+      });
+
+      state.miniMapGroup.addTo(state.miniMap);
+
+      // Fit the entire country of India in view
+      state.miniMap.fitBounds(INDIA_BOUNDS, { padding: [15, 15] });
+
+      setTimeout(() => {
+        if (state.miniMap) {
+          state.miniMap.invalidateSize();
+          state.miniMap.fitBounds(INDIA_BOUNDS, { padding: [15, 15] });
+        }
+      }, 250);
+    }
+
+    function setMiniMapLayer(type) {
+      if (!state.miniMap) return;
+      if (state.miniMapTileLayer) state.miniMap.removeLayer(state.miniMapTileLayer);
+      const url = type === 'satellite'
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      state.miniMapTileLayer = L.tileLayer(url, { maxZoom: 18, subdomains: ['a', 'b', 'c'] }).addTo(state.miniMap);
+
+      const btnOsm = document.getElementById('btn-mini-osm');
+      const btnSat = document.getElementById('btn-mini-sat');
+      if (btnOsm && btnSat) {
+        if (type === 'satellite') {
+          btnSat.className = 'px-2 py-0.5 rounded font-black themed-gradient-btn !text-white text-[10px]';
+          btnOsm.className = 'px-2 py-0.5 rounded font-bold text-black hover:bg-orange-100 text-[10px]';
+        } else {
+          btnOsm.className = 'px-2 py-0.5 rounded font-black themed-gradient-btn !text-white text-[10px]';
+          btnSat.className = 'px-2 py-0.5 rounded font-bold text-black hover:bg-orange-100 text-[10px]';
+        }
+      }
+    }
+
+    function fitMiniMapBounds() {
+      if (state.miniMap) {
+        state.miniMap.invalidateSize();
+        state.miniMap.fitBounds(INDIA_BOUNDS, { padding: [15, 15] });
+      }
+    }
+
+    // ----------------------------------------------------
+    // TAB: FULLSCREEN LIVE MAP VIEW
+    // ----------------------------------------------------
+    function renderMapView(devices) {
+      return `
+        <div class="h-[calc(100vh-140px)] min-h-[580px] flex flex-col rounded-3xl overflow-hidden themed-card">
+          <!-- Map Interactive Toolbar -->
+          <div class="p-3.5 themed-inner border-b-2 border-[var(--border-color)] flex flex-wrap items-center justify-between gap-3 z-10">
+            <div class="flex items-center space-x-3">
+              <span class="font-black text-sm tracking-tight flex items-center space-x-1.5 text-black">
+                <span class="text-orange-500 text-lg">🗺</span>
+                <span class="text-black">Survey of India — 5G Sensor Network</span>
+              </span>
+              <span class="text-xs text-orange-400 font-bold">|</span>
+              <span class="text-xs font-mono themed-accent-text font-black">${devices.length} Live Stations</span>
+            </div>
+
+            <!-- Quick City Fly-To Jump Buttons -->
+            <div class="flex items-center space-x-1.5 text-xs">
+              <span class="text-black text-[11px] font-black mr-1">Fly to:</span>
+              <button onclick="flyToCity('All India', [22.5, 78.9], 5)" class="px-2.5 py-1 rounded-lg themed-inner font-black text-black hover:bg-orange-100 hover:text-[#EA580C] border border-orange-300">🇮🇳 All India</button>
+              <button onclick="flyToCity('Bengaluru', [12.9716, 77.5946], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Bengaluru</button>
+              <button onclick="flyToCity('Delhi', [28.6139, 77.2090], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Delhi</button>
+              <button onclick="flyToCity('Mumbai', [19.0760, 72.8777], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Mumbai</button>
+              <button onclick="flyToCity('Hyderabad', [17.4504, 78.3808], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Hyderabad</button>
+              <button onclick="flyToCity('Chennai', [13.0067, 80.2025], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Chennai</button>
+              <button onclick="flyToCity('Kolkata', [22.5726, 88.3639], 12)" class="px-2.5 py-1 rounded-lg themed-inner font-bold text-black hover:bg-orange-100 hover:text-[#EA580C]">Kolkata</button>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-1 text-xs themed-inner p-1 rounded-xl">
+                <button onclick="setFullMapLayer('osm')" id="btn-full-osm" class="px-2.5 py-1 rounded font-black themed-gradient-btn !text-white text-xs">Standard OSM</button>
+                <button onclick="setFullMapLayer('satellite')" id="btn-full-sat" class="px-2.5 py-1 rounded font-bold text-black hover:bg-orange-100 text-xs">Satellite View</button>
+              </div>
+              <button onclick="fitFullMapBounds()" class="px-3.5 py-1.5 rounded-xl themed-gradient-btn !text-white text-xs font-black shadow-md">
+                🎯 Auto-Fit India
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Simulation Notification Bar on Map -->
+          <div id="map-simulation-ticker" class="px-4 py-2 bg-[#FFF7ED] border-b border-[#FED7AA] flex items-center justify-between z-10">
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
+              <span class="text-black font-semibold">5G Telemetry Stream:</span>
+              <span class="text-black font-black">Continuous real-time simulation active across India</span>
+            </div>
+            <span class="text-[10px] text-black font-mono font-bold">Sub-6GHz URLLC • 3s Sampling</span>
+          </div>
+
+          <div id="fullscreen-map-container" class="flex-1 w-full h-full min-h-[500px]"></div>
+        </div>
+      `;
+    }
+
+    function initFullScreenMap(devices) {
+      const container = document.getElementById('fullscreen-map-container');
+      if (!container || typeof L === 'undefined') return;
+
+      if (state.leafletMap) {
+        state.leafletMap.remove();
+        state.leafletMap = null;
+      }
+
+      state.leafletMap = L.map(container, {
+        center: [22.5, 79.5],
+        zoom: 5,
+        minZoom: 4,
+        maxZoom: 18,
+        attributionControl: false
+      });
+
+      // Default OpenStreetMap tiles (prominent India geography and cities)
+      state.fullMapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        subdomains: ['a', 'b', 'c']
+      }).addTo(state.leafletMap);
+
+      // Prominent Orange Boundary Outline of India
+      L.polygon(INDIA_BORDER, {
+        color: '#EA580C',
+        weight: 3.5,
+        opacity: 0.95,
+        fillColor: '#FF6600',
+        fillOpacity: 0.05,
+        dashArray: '8, 6'
+      }).addTo(state.leafletMap);
+
+      state.fullMapGroup = L.featureGroup();
+      state.fullMapMarkers = {};
+
+      devices.forEach(dev => {
+        const loc = state.locations.find(l => l.id === dev.locationId);
+        if (!loc || !loc.latitude || !loc.longitude) return;
+
+        const aqi = dev.latestMeasurement?.aqi || 85;
+        const badge = getAqiBadge(aqi);
+
+        const icon = L.divIcon({
+          className: 'custom-aqi-icon',
+          html: `<div class="aqi-marker-pin" style="background-color: ${badge.color}; box-shadow: 0 0 16px ${badge.color}aa;">${aqi}</div>`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18]
+        });
+
+        const marker = L.marker([loc.latitude, loc.longitude], { icon });
+        marker.bindPopup(buildPopupHtml(dev, loc, dev.latestMeasurement || {}, badge));
+        marker.on('click', () => marker.openPopup());
+
+        state.fullMapGroup.addLayer(marker);
+        state.fullMapMarkers[dev.deviceId] = marker;
+      });
+
+      state.fullMapGroup.addTo(state.leafletMap);
+
+      state.leafletMap.fitBounds(INDIA_BOUNDS, { padding: [25, 25] });
+
+      setTimeout(() => {
+        if (state.leafletMap) {
+          state.leafletMap.invalidateSize();
+          state.leafletMap.fitBounds(INDIA_BOUNDS, { padding: [25, 25] });
+        }
+      }, 250);
+    }
+
+    function setFullMapLayer(type) {
+      if (!state.leafletMap) return;
+      if (state.fullMapTileLayer) state.leafletMap.removeLayer(state.fullMapTileLayer);
+      const url = type === 'satellite'
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      state.fullMapTileLayer = L.tileLayer(url, { maxZoom: 18, subdomains: ['a', 'b', 'c'] }).addTo(state.leafletMap);
+
+      const btnOsm = document.getElementById('btn-full-osm');
+      const btnSat = document.getElementById('btn-full-sat');
+      if (btnOsm && btnSat) {
+        if (type === 'satellite') {
+          btnSat.className = 'px-2.5 py-1 rounded font-black themed-gradient-btn !text-white text-xs';
+          btnOsm.className = 'px-2.5 py-1 rounded font-bold text-black hover:bg-orange-100 text-xs';
+        } else {
+          btnOsm.className = 'px-2.5 py-1 rounded font-black themed-gradient-btn !text-white text-xs';
+          btnSat.className = 'px-2.5 py-1 rounded font-bold text-black hover:bg-orange-100 text-xs';
+        }
+      }
+    }
+
+    function fitFullMapBounds() {
+      if (state.leafletMap) {
+        state.leafletMap.invalidateSize();
+        state.leafletMap.fitBounds(INDIA_BOUNDS, { padding: [25, 25] });
+      }
+    }
+
+    function flyToCity(name, coords, zoom) {
+      if (state.leafletMap) {
+        state.leafletMap.flyTo(coords, zoom, { duration: 1.2 });
+      }
+    }
+
+    // ----------------------------------------------------
+    // TAB: SENSORS VIEW
+    // ----------------------------------------------------
+    function renderSensorsView(devices) {
+      return `
+        <div class="space-y-5">
+          <div class="flex items-center justify-between p-4 rounded-3xl themed-card">
+            <div>
+              <h3 class="font-bold text-sm tracking-tight">Active 5G IoT Sensor Nodes</h3>
+              <p class="text-xs text-slate-400">Deployed telemetry nodes streaming criteria pollutants and health telemetry</p>
+            </div>
+            <button onclick="fetchAllData()" class="px-3.5 py-1.5 rounded-xl themed-inner hover:opacity-80 text-xs font-semibold">
+              Refresh Nodes
+            </button>
+          </div>
+
+          <div class="rounded-3xl themed-card overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="themed-inner font-mono text-[10px] text-slate-400 uppercase">
+                <tr>
+                  <th class="py-3.5 px-4">Device ID / Station</th>
+                  <th class="py-3.5 px-4">Location</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4">AQI (CPCB)</th>
+                  <th class="py-3.5 px-4">PM2.5 / PM10</th>
+                  <th class="py-3.5 px-4">5G Telemetry</th>
+                  <th class="py-3.5 px-4">Health / Battery</th>
+                  <th class="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--border-color)] font-mono">
+                ${devices.map(dev => {
+                  const loc = state.locations.find(l => l.id === dev.locationId);
+                  const meas = dev.latestMeasurement || {};
+                  const badge = getAqiBadge(meas.aqi || 85);
+
+                  return `
+                    <tr class="hover:bg-slate-800/20">
+                      <td class="py-3.5 px-4 font-sans">
+                        <div class="font-bold">${dev.name}</div>
+                        <div class="font-mono text-[11px] themed-accent-text">${dev.deviceId} • ${dev.firmwareVersion}</div>
+                      </td>
+                      <td class="py-3.5 px-4 font-sans">
+                        <div class="font-medium">${loc?.name || 'Field Node'}</div>
+                        <div class="text-[11px] text-slate-400">${loc?.city} (${loc?.type})</div>
+                      </td>
+                      <td class="py-3.5 px-4 font-sans">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          dev.status === 'ONLINE' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-rose-500/20 text-rose-300'
+                        }">
+                          <span class="w-1.5 h-1.5 rounded-full mr-1.5 bg-current"></span>
+                          ${dev.status}
+                        </span>
+                      </td>
+                      <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-1 rounded-xl text-xs font-bold ${badge.bg}">
+                          ${meas.aqi || 85} • ${badge.label}
+                        </span>
+                      </td>
+                      <td class="py-3.5 px-4">
+                        <div>PM2.5: <strong class="text-white">${meas.pm25 || '--'}</strong> µg/m³</div>
+                        <div class="text-slate-400 text-[11px]">PM10: ${meas.pm10 || '--'} µg/m³</div>
+                      </td>
+                      <td class="py-3.5 px-4 text-xs">
+                        <div class="themed-accent-text font-bold">${dev.networkType}</div>
+                        <div class="text-slate-400 text-[11px]">${dev.latencyMs}ms • ${dev.signalRsrp} dBm</div>
+                      </td>
+                      <td class="py-3.5 px-4 text-xs">
+                        <div>🔋 ${dev.battery}% • CPU ${dev.cpuUsage}%</div>
+                        ${dev.edgeBufferCount > 0 ? `<div class="text-amber-400 font-bold text-[10px]">Queue: ${dev.edgeBufferCount} pkts</div>` : ''}
+                      </td>
+                      <td class="py-3.5 px-4 text-right font-sans">
+                        <button
+                          onclick="openStationDeepDive('${dev.deviceId}')"
+                          class="px-3.5 py-1.5 rounded-xl themed-inner hover:opacity-80 text-xs font-semibold"
+                        >
+                          Deep Dive →
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // TAB: ANALYTICS VIEW
+    // ----------------------------------------------------
+    function renderAnalyticsView() {
+      return `
+        <div class="space-y-6">
+          <div class="p-6 rounded-3xl themed-card">
+            <h3 class="font-bold text-base mb-1">Multi-Pollutant Diurnal Progression & Meteorology</h3>
+            <p class="text-xs text-slate-400 mb-6">24-hour composite progression curve across criteria pollutants</p>
+
+            <div class="h-64 w-full relative flex items-end pt-6 pb-2">
+              <svg class="w-full h-full overflow-visible" viewBox="0 0 800 200">
+                <defs>
+                  <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--accent-primary)" stop-opacity="0.4" />
+                    <stop offset="100%" stop-color="var(--accent-secondary)" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="50" x2="800" y2="50" stroke="var(--border-color)" stroke-dasharray="4 4" />
+                <line x1="0" y1="100" x2="800" y2="100" stroke="var(--border-color)" stroke-dasharray="4 4" />
+                <line x1="0" y1="150" x2="800" y2="150" stroke="var(--border-color)" stroke-dasharray="4 4" />
+                <path d="M 0,140 Q 100,160 200,90 T 400,60 T 600,120 T 800,80 L 800,200 L 0,200 Z" fill="url(#curveGradient)" />
+                <path d="M 0,140 Q 100,160 200,90 T 400,60 T 600,120 T 800,80" fill="none" stroke="var(--accent-primary)" stroke-width="3.5" />
+                <circle cx="200" cy="90" r="6" fill="var(--accent-primary)" stroke="#ffffff" stroke-width="2" />
+                <circle cx="400" cy="60" r="6" fill="var(--accent-primary)" stroke="#ffffff" stroke-width="2" />
+                <circle cx="600" cy="120" r="6" fill="var(--accent-primary)" stroke="#ffffff" stroke-width="2" />
+              </svg>
+            </div>
+
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono mt-3 pt-3 border-t border-[var(--border-color)]">
+              <span>00:00 (Midnight Baseline)</span>
+              <span>06:00 (Morning Rush)</span>
+              <span>12:00 (Solar Inversion)</span>
+              <span>18:00 (Evening Traffic)</span>
+              <span>23:59 (Current)</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs font-bold block mb-1">Temperature ↔ PM2.5</span>
+              <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-cyan-500/20 text-cyan-300 inline-block mb-2">r = -0.68</span>
+              <p class="text-xs text-slate-400">Thermal dispersion drops PM2.5 concentrations during peak afternoon heating.</p>
+            </div>
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs font-bold block mb-1">Humidity ↔ AQI</span>
+              <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-rose-500/20 text-rose-300 inline-block mb-2">r = +0.74</span>
+              <p class="text-xs text-slate-400">High relative humidity accelerates aerosol hygroscopic growth and particulate retention.</p>
+            </div>
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs font-bold block mb-1">Wind Speed ↔ Dispersion</span>
+              <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-emerald-500/20 text-emerald-300 inline-block mb-2">r = -0.81</span>
+              <p class="text-xs text-slate-400">Sustained surface winds > 5 m/s clear stagnant pollution plumes in < 45 minutes.</p>
+            </div>
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs font-bold block mb-1">Rainfall ↔ Particulates</span>
+              <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-teal-500/20 text-teal-300 inline-block mb-2">r = -0.92</span>
+              <p class="text-xs text-slate-400">Precipitation scavenging removes coarse airborne particles within 30 minutes.</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // TAB: COMPARISON VIEW
+    // ----------------------------------------------------
+    function renderComparisonView() {
+      const devA = state.devices[0] || {};
+      const devB = state.devices[1] || {};
+      const locA = state.locations.find(l => l.id === devA.locationId);
+      const locB = state.locations.find(l => l.id === devB.locationId);
+
+      return `
+        <div class="space-y-6">
+          <div class="p-5 rounded-3xl themed-card flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-base">Station Comparison: Industrial Area vs. Traffic Corridor</h3>
+              <p class="text-xs text-slate-400">Differential environmental exposure analysis</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 rounded-3xl themed-card">
+              <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)] mb-4">
+                <div>
+                  <h4 class="font-bold text-base">${locA?.name || 'Station A'}</h4>
+                  <span class="text-xs text-slate-400 font-mono">${devA.deviceId} • ${locA?.city}</span>
+                </div>
+                <span class="px-3 py-1 rounded-xl text-xs font-bold ${getAqiBadge(devA.latestMeasurement?.aqi || 85).bg}">
+                  AQI ${devA.latestMeasurement?.aqi || 85}
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+                <div class="p-3.5 rounded-2xl themed-inner">
+                  <span class="text-slate-400 block text-[10px]">PM2.5</span>
+                  <span class="text-xl font-bold">${devA.latestMeasurement?.pm25 || '--'} µg/m³</span>
+                </div>
+                <div class="p-3.5 rounded-2xl themed-inner">
+                  <span class="text-slate-400 block text-[10px]">5G LATENCY</span>
+                  <span class="text-xl font-bold themed-accent-text">${devA.latencyMs} ms</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6 rounded-3xl themed-card">
+              <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)] mb-4">
+                <div>
+                  <h4 class="font-bold text-base">${locB?.name || 'Station B'}</h4>
+                  <span class="text-xs text-slate-400 font-mono">${devB.deviceId} • ${locB?.city}</span>
+                </div>
+                <span class="px-3 py-1 rounded-xl text-xs font-bold ${getAqiBadge(devB.latestMeasurement?.aqi || 85).bg}">
+                  AQI ${devB.latestMeasurement?.aqi || 85}
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+                <div class="p-3.5 rounded-2xl themed-inner">
+                  <span class="text-slate-400 block text-[10px]">PM2.5</span>
+                  <span class="text-xl font-bold">${devB.latestMeasurement?.pm25 || '--'} µg/m³</span>
+                </div>
+                <div class="p-3.5 rounded-2xl themed-inner">
+                  <span class="text-slate-400 block text-[10px]">5G LATENCY</span>
+                  <span class="text-xl font-bold themed-accent-text">${devB.latencyMs} ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // TAB: 5G PERFORMANCE
+    // ----------------------------------------------------
+    function renderNetworkView() {
+      return `
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs text-slate-400 font-medium">Average URLLC Latency</span>
+              <div class="my-2 flex items-baseline space-x-2">
+                <span class="text-4xl font-black font-mono themed-accent-text">${state.networkStats?.averageLatencyMs || 12}</span>
+                <span class="text-xs text-slate-400 font-mono">ms</span>
+              </div>
+              <span class="text-[11px] themed-accent-text font-bold">● 3GPP Rel-16 Sub-6GHz</span>
+            </div>
+
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs text-slate-400 font-medium">Cellular Throughput</span>
+              <div class="my-2 flex items-baseline space-x-2">
+                <span class="text-4xl font-black font-mono">${state.networkStats?.downloadSpeedMbps || 119}</span>
+                <span class="text-xs text-slate-400 font-mono">Mbps Down</span>
+              </div>
+              <span class="text-[11px] text-slate-400">Uplink: <strong class="themed-accent-text">${state.networkStats?.uploadSpeedMbps || 36} Mbps</strong></span>
+            </div>
+
+            <div class="p-5 rounded-3xl themed-card">
+              <span class="text-xs text-slate-400 font-medium">Packet Loss Rate</span>
+              <div class="my-2 flex items-baseline space-x-2">
+                <span class="text-4xl font-black font-mono">${state.networkStats?.packetLossPct || 0.12}%</span>
+              </div>
+              <span class="text-[11px] themed-accent-text font-bold">● 99.94% Air-Link Reliability</span>
+            </div>
+
+            <div class="p-5 rounded-3xl themed-card flex flex-col justify-between">
+              <div>
+                <span class="text-xs text-slate-400 font-medium">Edge Gateway Failover</span>
+                <div class="my-1">
+                  <span class="text-2xl font-bold font-mono text-amber-400">
+                    ${state.devices.reduce((s, d) => s + (d.edgeBufferCount || 0), 0)}
+                  </span>
+                  <span class="text-xs text-slate-400 ml-1">Packets in Buffer</span>
+                </div>
+              </div>
+
+              <div class="flex space-x-2 mt-2">
+                <button
+                  onclick="triggerFailover(true)"
+                  class="flex-1 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-[11px] font-bold"
+                >
+                  Drop 5G
+                </button>
+                <button
+                  onclick="triggerFailover(false)"
+                  class="flex-1 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 text-[11px] font-bold"
+                >
+                  Reconnect
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 rounded-3xl themed-card">
+            <h4 class="font-bold text-sm mb-4">5G Edge-to-Cloud Subsystem Latency Allocation</h4>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+              ${(state.networkStats?.networkTopology || []).map((t, idx) => `
+                <div class="p-4 rounded-2xl themed-inner">
+                  <span class="text-[10px] font-mono themed-accent-text font-bold uppercase mb-1 block">Tier 0${idx + 1}</span>
+                  <h5 class="font-bold text-xs">${t.tier}</h5>
+                  <p class="text-[11px] text-slate-400 my-1 font-mono">${t.protocol}</p>
+                  <div class="mt-2 pt-2 border-t border-[var(--border-color)] text-xs font-mono font-bold">
+                    ⏱ ${t.processingTime || t.transmissionTime || t.deliveryTime}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function triggerFailover(drop) {
+      await fetch(`${API_BASE}/network/toggle-failover`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId: 'ECO-BLR-01', dropNetwork: drop })
+      });
+      fetchAllData();
+    }
+
+    // ----------------------------------------------------
+    // TAB: ALERTS VIEW
+    // ----------------------------------------------------
+    function renderAlertsView() {
+      return `
+        <div class="space-y-6">
+          <div class="p-5 rounded-3xl themed-card flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-base">Automated Environmental Alert Center</h3>
+              <p class="text-xs text-slate-400">Incident event log and automated CPCB threshold rules</p>
+            </div>
+          </div>
+
+          <div class="rounded-3xl themed-card overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="themed-inner font-mono text-[10px] text-slate-400 uppercase">
+                <tr>
+                  <th class="p-3.5">Severity</th>
+                  <th class="p-3.5">Station</th>
+                  <th class="p-3.5">Parameter & Value</th>
+                  <th class="p-3.5">Threshold</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--border-color)] font-mono">
+                ${state.alerts.map(a => `
+                  <tr class="hover:bg-slate-800/20">
+                    <td class="p-3.5">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                        a.severity === 'EMERGENCY' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'
+                      }">${a.severity}</span>
+                    </td>
+                    <td class="p-3.5 font-sans font-medium">${a.locationName}</td>
+                    <td class="p-3.5 font-bold">${a.parameter.toUpperCase()}: <span class="text-rose-400">${a.value}</span></td>
+                    <td class="p-3.5 text-slate-400">${a.threshold}</td>
+                    <td class="p-3.5">
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        a.status === 'ACTIVE' ? 'bg-rose-500 text-white' : 'themed-inner'
+                      }">${a.status}</span>
+                    </td>
+                    <td class="p-3.5 text-right font-sans">
+                      ${a.status !== 'RESOLVED' ? `
+                        <button onclick="resolveAlert('${a.id}')" class="px-2.5 py-1 rounded-lg themed-gradient-btn text-[11px] !text-black !font-bold">
+                          Resolve
+                        </button>
+                      ` : '<span class="text-slate-500 text-[10px]">Resolved</span>'}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    async function resolveAlert(id) {
+      await fetch(`${API_BASE}/alerts/${id}/resolve`, { method: 'POST' });
+      fetchAllData();
+    }
+
+    // ----------------------------------------------------
+    // TAB: REPORTS & CSV
+    // ----------------------------------------------------
+    function renderReportsView() {
+      return `
+        <div class="space-y-6 max-w-2xl">
+          <div class="p-6 rounded-3xl themed-card">
+            <h3 class="font-bold text-base mb-1">National Ambient Air Quality Compliance Reports</h3>
+            <p class="text-xs text-slate-400 mb-6">Generate official CPCB compliance reports and export time-series datasets</p>
+
+            <div class="space-y-4 text-xs">
+              <div>
+                <label class="text-slate-400 block mb-1">Select Monitoring Station</label>
+                <select id="report-device-select" class="w-full themed-inner rounded-xl px-3.5 py-2.5">
+                  <option value="ALL">All Metro Stations (Comprehensive Network Report)</option>
+                  ${state.devices.map(d => `<option value="${d.deviceId}">${d.name} (${d.deviceId})</option>`).join('')}
+                </select>
+              </div>
+
+              <div class="pt-4 flex items-center space-x-3">
+                <button onclick="generateComplianceReport()" class="flex-1 py-3 rounded-2xl themed-gradient-btn text-xs">
+                  📄 Generate Compliance Report
+                </button>
+                <button onclick="downloadCsv()" class="px-5 py-3 rounded-2xl themed-inner hover:opacity-80 font-medium text-xs">
+                  Download CSV
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateComplianceReport() {
+      const select = document.getElementById('report-device-select');
+      const dev = select ? select.value : 'ALL';
+      const res = await fetch(`${API_BASE}/reports/generate?deviceId=${dev}`);
+      const data = await res.json();
+      state.reportData = data;
+      renderReportModal();
+    }
+
+    function downloadCsv() {
+      const select = document.getElementById('report-device-select');
+      const dev = select ? select.value : 'ALL';
+      window.location.href = `${API_BASE}/reports/export-csv?deviceId=${dev}`;
+    }
+
+    // ----------------------------------------------------
+    // TAB: PREDICTIONS & AI VIEW
+    // ----------------------------------------------------
+    function renderPredictionsView() {
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="p-6 rounded-3xl themed-card">
+              <h3 class="font-bold text-base mb-1">Machine Learning AQI Horizon Forecasting</h3>
+              <p class="text-xs text-slate-400 mb-4">Diurnal urban inversion model predictions</p>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                ${(state.predictions?.predictions || [
+                  { horizon: '1 Hour', aqi: 152, confidence: '94%', category: 'Moderate', delta: 4 },
+                  { horizon: '6 Hours', aqi: 178, confidence: '86%', category: 'Moderate', delta: 30 },
+                  { horizon: '24 Hours', aqi: 135, confidence: '78%', category: 'Moderate', delta: -13 }
+                ]).map(p => `
+                  <div class="p-4 rounded-2xl themed-inner">
+                    <div class="flex justify-between text-xs mb-2">
+                      <span class="font-bold text-slate-300">+${p.horizon}</span>
+                      <span class="text-[10px] font-mono themed-accent-text font-bold">${p.confidence}</span>
+                    </div>
+                    <div class="text-3xl font-extrabold font-mono my-2">${p.aqi}</div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${getAqiBadge(p.aqi).bg}">${p.category}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Hotspots -->
+            <div class="p-6 rounded-3xl themed-card">
+              <h3 class="font-bold text-sm mb-3">Identified Industrial & Traffic Hotspots</h3>
+              <div class="space-y-2.5">
+                ${state.hotspots.slice(0, 5).map(hot => `
+                  <div class="p-3.5 rounded-2xl themed-inner flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-xs">${hot.locationName}</h4>
+                      <span class="text-[10px] text-slate-400 font-mono">${hot.city} • ${hot.type}</span>
+                    </div>
+                    <div class="text-right font-mono">
+                      <span class="text-xs font-bold block">PM2.5: ${hot.pm25} µg/m³</span>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold ${getAqiBadge(hot.aqi).bg}">AQI ${hot.aqi}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Ask EcoSense AI -->
+          <div class="p-5 rounded-3xl themed-card flex flex-col justify-between h-[580px]">
+            <div>
+              <div class="flex items-center space-x-2 pb-3 border-b border-[var(--border-color)]">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 pulse-glow"></span>
+                <h3 class="font-bold text-sm">Ask EcoSense AI</h3>
+              </div>
+
+              <div id="ai-chat-box" class="my-3 space-y-3 overflow-y-auto max-h-[420px] pr-1 text-xs">
+                ${state.aiMessages.map(m => `
+                  <div class="flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}">
+                    <div class="p-3 rounded-2xl max-w-[90%] leading-relaxed ${
+                      m.sender === 'user' ? 'themed-gradient-btn !text-black !font-bold' : 'themed-inner'
+                    }">
+                      ${m.text}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <form onsubmit="handleAiSubmit(event)" class="pt-3 border-t border-[var(--border-color)] flex items-center space-x-2">
+              <input
+                id="ai-user-input"
+                type="text"
+                placeholder="Ask e.g. Which station has highest PM2.5?"
+                class="flex-1 themed-inner rounded-xl px-3.5 py-2 text-xs focus:outline-none"
+              />
+              <button type="submit" class="px-4 py-2 rounded-xl themed-gradient-btn text-xs">
+                Ask
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleAiSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('ai-user-input');
+      const q = input ? input.value.trim() : '';
+      if (!q) return;
+
+      input.value = '';
+      state.aiMessages.push({ sender: 'user', text: q });
+      renderApp();
+
+      try {
+        const res = await fetch(`${API_BASE}/assistant/ask`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q })
+        });
+        const data = await res.json();
+        state.aiMessages.push({ sender: 'assistant', text: data.answer });
+      } catch (e) {
+        state.aiMessages.push({ sender: 'assistant', text: 'Error querying sensor engine.' });
+      }
+      renderApp();
+    }
+
+    // ----------------------------------------------------
+    // TAB: ACCESS CONTROL & SETTINGS
+    // ----------------------------------------------------
+    function renderUsersView() {
+      return `
+        <div class="space-y-4 max-w-2xl">
+          <div class="p-6 rounded-3xl themed-card">
+            <h3 class="font-bold text-base mb-4">Municipal Access Control Matrix</h3>
+            <div class="space-y-3 text-xs">
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">Dr. Aarav Sharma (admin@ecosense.io)</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">ADMIN — Full Fleet CRUD, Thresholds, OTA Commands</span>
+              </div>
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">Priya Narayanan (officer@ecosense.io)</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">ENVIRONMENT_OFFICER — Compliance Reports & Incidents</span>
+              </div>
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">Prof. K. Venkatesh (researcher@ecosense.io)</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">RESEARCHER — Time-series Queries & CSV Export</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSettingsView() {
+      return `
+        <div class="space-y-4 max-w-2xl">
+          <div class="p-6 rounded-3xl themed-card">
+            <h3 class="font-bold text-base mb-4">System Microservice Health</h3>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">REST & Ingestion API</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">● HEALTHY (2.1 ms)</span>
+              </div>
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">5G SA URLLC Gateway</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">● HEALTHY (12 ms)</span>
+              </div>
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">CPCB NAQI Engine</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">● HEALTHY (0.8 ms)</span>
+              </div>
+              <div class="p-3.5 rounded-2xl themed-inner">
+                <span class="font-bold block">WebSocket / SSE Stream</span>
+                <span class="themed-accent-text font-mono text-[10px] font-bold">● HEALTHY (&lt; 5 ms)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // MODALS: STATION DEEP DIVE & ADD DEVICE & REPORT
+    // ----------------------------------------------------
+    async function openStationDeepDive(deviceId) {
+      const dev = state.devices.find(d => d.deviceId === deviceId);
+      if (!dev) return;
+      state.selectedStation = dev;
+
+      const res = await fetch(`${API_BASE}/devices/${deviceId}`);
+      const data = await res.json();
+      state.selectedStationHistory = data.history || [];
+
+      renderStationModal();
+    }
+
+    function renderStationModal() {
+      const modal = document.getElementById('modal-container');
+      const dev = state.selectedStation;
+      const loc = state.locations.find(l => l.id === dev.locationId);
+      const meas = dev.latestMeasurement || {};
+      const badge = getAqiBadge(meas.aqi || 85);
+
+      modal.innerHTML = `
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div class="w-full max-w-2xl themed-card rounded-3xl p-6 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+              <div>
+                <h3 class="font-extrabold text-base">${loc?.name || dev.name}</h3>
+                <span class="text-xs text-slate-400 font-mono">${dev.deviceId} • ${loc?.city}</span>
+              </div>
+              <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 text-lg">✕</button>
+            </div>
+
+            <div class="grid grid-cols-4 gap-3 text-xs font-mono">
+              <div class="p-3 rounded-2xl themed-inner">
+                <span class="text-slate-400 block text-[10px]">OVERALL AQI</span>
+                <span class="text-2xl font-black">${meas.aqi || 85}</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${badge.bg} block mt-1">${badge.label}</span>
+              </div>
+              <div class="p-3 rounded-2xl themed-inner">
+                <span class="text-slate-400 block text-[10px]">PM2.5</span>
+                <span class="text-xl font-bold">${meas.pm25 || '--'}</span>
+                <span class="text-slate-500 text-[10px]">µg/m³</span>
+              </div>
+              <div class="p-3 rounded-2xl themed-inner">
+                <span class="text-slate-400 block text-[10px]">PM10</span>
+                <span class="text-xl font-bold">${meas.pm10 || '--'}</span>
+                <span class="text-slate-500 text-[10px]">µg/m³</span>
+              </div>
+              <div class="p-3 rounded-2xl themed-inner">
+                <span class="text-slate-400 block text-[10px]">5G LINK</span>
+                <span class="text-xl font-bold themed-accent-text">${dev.latencyMs} ms</span>
+                <span class="text-slate-500 text-[10px]">${dev.signalRsrp} dBm</span>
+              </div>
+            </div>
+
+            <div class="max-h-48 overflow-y-auto rounded-2xl themed-inner">
+              <table class="w-full text-left text-[11px] font-mono">
+                <thead class="themed-inner text-slate-500 text-[10px] uppercase">
+                  <tr>
+                    <th class="p-2.5">Time</th>
+                    <th class="p-2.5">AQI</th>
+                    <th class="p-2.5">PM2.5</th>
+                    <th class="p-2.5">Temp</th>
+                    <th class="p-2.5">Quality</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--border-color)]">
+                  ${state.selectedStationHistory.slice(-8).reverse().map(h => `
+                    <tr>
+                      <td class="p-2.5 text-slate-400">${new Date(h.timestamp).toLocaleTimeString()}</td>
+                      <td class="p-2.5 font-bold">${h.aqi}</td>
+                      <td class="p-2.5">${h.pm25}</td>
+                      <td class="p-2.5">${h.temperature}°C</td>
+                      <td class="p-2.5 themed-accent-text font-bold">${h.quality}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button onclick="closeModal()" class="px-5 py-2 rounded-xl themed-inner font-semibold text-xs">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openAddDeviceModal() {
+      const modal = document.getElementById('modal-container');
+      modal.innerHTML = `
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div class="w-full max-w-md themed-card rounded-3xl p-6 shadow-2xl">
+            <h3 class="font-extrabold text-base mb-4">Deploy New 5G IoT Sensor Station</h3>
+            <form onsubmit="handleAddDeviceSubmit(event)" class="space-y-3.5 text-xs">
+              <div>
+                <label class="text-slate-400 block mb-1">Device ID</label>
+                <input id="new-dev-id" type="text" placeholder="e.g. ECO-BLR-05" required class="w-full themed-inner rounded-xl px-3 py-2 font-mono" />
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Station Name</label>
+                <input id="new-dev-name" type="text" placeholder="e.g. Station Whitefield-Tech" required class="w-full themed-inner rounded-xl px-3 py-2" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-slate-400 block mb-1">City</label>
+                  <input id="new-dev-city" type="text" value="Bengaluru" required class="w-full themed-inner rounded-xl px-3 py-2" />
+                </div>
+                <div>
+                  <label class="text-slate-400 block mb-1">Network Type</label>
+                  <select id="new-dev-net" class="w-full themed-inner rounded-xl px-3 py-2">
+                    <option value="5G SA (URLLC)">5G SA (URLLC)</option>
+                    <option value="5G NSA">5G NSA</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex justify-end space-x-2 pt-3">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl themed-inner text-slate-300">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl themed-gradient-btn !text-black !font-bold">Deploy Node</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleAddDeviceSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('new-dev-id').value;
+      const name = document.getElementById('new-dev-name').value;
+      const city = document.getElementById('new-dev-city').value;
+      const net = document.getElementById('new-dev-net').value;
+
+      await fetch(`${API_BASE}/devices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId: id, name, city, networkType: net, latitude: 12.97, longitude: 77.59 })
+      });
+      closeModal();
+      fetchAllData();
+    }
+
+    function renderReportModal() {
+      const modal = document.getElementById('modal-container');
+      const r = state.reportData;
+      if (!r) return;
+
+      modal.innerHTML = `
+        <div class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div class="w-full max-w-xl bg-white text-slate-900 rounded-3xl p-8 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b pb-3 border-slate-200">
+              <div>
+                <h2 class="text-lg font-extrabold text-slate-900">National Environmental Monitoring Report</h2>
+                <p class="text-xs text-slate-500 font-mono">CPCB NAQI Standards • EcoSense 5G Platform</p>
+              </div>
+              <span class="text-xs font-mono font-bold bg-slate-100 px-3 py-1 rounded-xl border">${r.reportId}</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-3 rounded-2xl border border-slate-200">
+              <div><strong>Station:</strong> ${r.station}</div>
+              <div><strong>Location:</strong> ${r.location}</div>
+              <div><strong>Period:</strong> ${r.period}</div>
+              <div><strong>Sensor Uptime:</strong> ${r.sensorUptime}</div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 text-center text-xs">
+              <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                <span class="text-[10px] text-emerald-800 font-bold block">AVG AQI</span>
+                <span class="text-xl font-black text-emerald-700 font-mono">${r.aqiStats?.avg}</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-[10px] text-slate-600 font-bold block">MIN AQI</span>
+                <span class="text-lg font-black text-slate-700 font-mono">${r.aqiStats?.min}</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200">
+                <span class="text-[10px] text-rose-800 font-bold block">PEAK AQI</span>
+                <span class="text-lg font-black text-rose-700 font-mono">${r.aqiStats?.max}</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+                <span class="text-[10px] text-amber-800 font-bold block">VIOLATIONS</span>
+                <span class="text-lg font-black text-amber-700 font-mono">${r.pollutionViolations}</span>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-3 border-t border-slate-200 text-xs">
+              <span class="text-[11px] text-slate-400 font-mono">Generated: ${new Date(r.generatedAt).toLocaleString()}</span>
+              <div class="space-x-2">
+                <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs">🖨 Print / PDF</button>
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-800 font-bold text-xs">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal-container');
+      if (modal) modal.innerHTML = '';
+    }
+
+    // Boot Application with Saved Theme
+    function bootApp() {
+      applyTheme(state.theme);
+      fetchAllData();
+      initSSE();
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', bootApp);
+    } else {
+      bootApp();
+    }
+  </script>
+</body>
+</html>

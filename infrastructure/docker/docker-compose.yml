@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # 1. EcoSense 5G REST & Telemetry Backend
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: ../infrastructure/docker/Dockerfile.backend
+    container_name: ecosense-backend
+    restart: always
+    ports:
+      - "5050:5050"
+    environment:
+      - NODE_ENV=production
+      - PORT=5050
+      - DATABASE_URL=postgresql://ecosense:EcoSensePass2026@postgres:5432/ecosense_db
+      - MQTT_BROKER_URL=mqtt://mqtt-broker:1883
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=ecosense_5g_secret_key_2026
+    depends_on:
+      - postgres
+      - mqtt-broker
+      - redis
+    networks:
+      - ecosense-network
+
+  # 2. Eclipse Mosquitto MQTT Ingestion Broker
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0
+    container_name: ecosense-mqtt
+    restart: always
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+    volumes:
+      - ../mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+    networks:
+      - ecosense-network
+
+  # 3. PostgreSQL with TimescaleDB Extension (Time-Series Sensor Store)
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: ecosense-timescaledb
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=ecosense_db
+      - POSTGRES_USER=ecosense
+      - POSTGRES_PASSWORD=EcoSensePass2026
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - ecosense-network
+
+  # 4. Redis Cache & Real-Time PubSub Buffer
+  redis:
+    image: redis:7-alpine
+    container_name: ecosense-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ecosense-network
+
+  # 5. Reverse Proxy & Static Asset Server
+  nginx:
+    image: nginx:alpine
+    container_name: ecosense-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ../../backend/public:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    networks:
+      - ecosense-network
+
+networks:
+  ecosense-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  mosquitto-data:
+  mosquitto-log:
+  redis-data:
