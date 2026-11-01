@@ -1,0 +1,58 @@
+{
+  "system": {
+    "platform": "EcoSense 5G",
+    "version": "2.4.1",
+    "regulatoryStandard": "CPCB / National Air Quality Index (NAQI) India",
+    "cellularNetwork": "5G NR Sub-6GHz Standalone (3GPP Rel-16 URLLC)"
+  },
+  "sensors": [
+    {
+      "model": "Plantower PMS5003",
+      "type": "Laser Scattering Particulate Matter",
+      "parameters": ["PM1.0", "PM2.5", "PM10"],
+      "interface": "UART2 (9600 baud, 8N1)",
+      "pins": { "tx": 17, "rx": 16, "set": 18, "reset": 19 },
+      "range": { "min": 0.0, "max": 999.0, "unit": "µg/m³" },
+      "accuracy": "±10% @ 100~500 µg/m³",
+      "calibration": {
+        "slope": 1.02,
+        "offset": -1.4,
+        "humidityCorrectionFormula": "PM_corrected = PM_raw / (1.0 + 0.25 * pow(RH/100, 2))"
+      }
+    },
+    {
+      "model": "Bosch Sensortec BME280",
+      "type": "Integrated Environmental Unit",
+      "parameters": ["Temperature", "Relative Humidity", "Barometric Pressure"],
+      "interface": "I2C (Address 0x76)",
+      "pins": { "sda": 21, "scl": 22 },
+      "range": {
+        "temperature": { "min": -40.0, "max": 85.0, "unit": "°C" },
+        "humidity": { "min": 0.0, "max": 100.0, "unit": "%RH" },
+        "pressure": { "min": 300.0, "max": 1100.0, "unit": "hPa" }
+      },
+      "samplingRateHz": 1.0
+    },
+    {
+      "model": "Winsen MQ-135 & MQ-7",
+      "type": "SnO2 Electrochemical Semiconductor Gas",
+      "parameters": ["CO", "NO2", "NH3", "Benzene / VOCs"],
+      "interface": "Analog ADC1 (12-bit, Attenuation 11dB)",
+      "pins": { "adc_in": 34 },
+      "preheatTimeSeconds": 120,
+      "calibration": {
+        "loadResistanceKohm": 20.0,
+        "cleanAirRatio": 3.6,
+        "coPpmFormula": "ppm = 98.322 * pow(Rs/R0, -1.458)"
+      }
+    },
+    {
+      "model": "SIMCom SIM8200EA-M2",
+      "type": "5G NR / LTE-A Cellular Transceiver",
+      "interface": "UART1 (115200 baud) + USB 3.0",
+      "frequencyBands": ["n1", "n3", "n28", "n77", "n78 (3500MHz)"],
+      "features": ["URLLC Low Latency", "eMBB High Bandwidth", "Fallback to 4G LTE-A Cat 20"],
+      "pins": { "tx": 27, "rx": 26, "pwrkey": 4, "reset": 5 }
+    }
+  ]
+}

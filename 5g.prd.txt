@@ -1,0 +1,1670 @@
+The architecture follows a practical Sensor → Edge → 5G → MQTT/API → Cloud → Analytics → Dashboard → Alerts model. 5G/IoT environmental-monitoring research commonly uses edge processing, cloud connectivity, and MQTT-style messaging to support real-time monitoring and scalability. MDPI
+PRD — 5G Environmental Monitoring System
+1. Project Overview
+Project Name
+EcoSense 5G — Real-Time Environmental Monitoring & Intelligence Platform
+One-line description
+A real-time IoT environmental monitoring platform that uses 5G connectivity, smart sensors, edge computing, cloud analytics, geospatial visualization, AI-based anomaly detection, and automated alerts to monitor air quality and environmental conditions.
+
+Core problem
+Traditional environmental monitoring systems often depend on fixed monitoring stations, periodic measurements, or fragmented data sources.
+
+The proposed system continuously collects environmental measurements from distributed sensor nodes and sends them through a high-speed 5G network to a centralized platform.
+
+Users can then:
+- Monitor environmental conditions in real time
+- View sensor locations on a map
+- Track pollution trends
+- Detect abnormal conditions
+- Receive alerts
+- Compare different locations
+- Download historical data
+- Generate environmental reports
+For India, the system can use CPCB/National AQI concepts for air-quality interpretation. CPCB's AQI framework uses pollutants including PM2.5, PM10, NO₂, SO₂, CO, O₃ and NH₃, with the highest applicable pollutant sub-index determining the overall AQI. app.cpcbccr.com
+2. Goals
+Primary goals
+1. Collect environmental data using IoT sensors.
+2. Connect sensor nodes using 5G.
+3. Process data at the edge where appropriate.
+4. Send sensor data securely to the cloud.
+5. Store historical environmental data.
+6. Display real-time information through a web dashboard.
+7. Calculate environmental/AQI indicators.
+8. Detect abnormal environmental conditions.
+9. Generate alerts automatically.
+10. Provide map-based environmental visualization.
+11. Provide historical analytics.
+12. Support multiple monitoring stations.
+13. Provide device health monitoring.
+14. Generate downloadable reports.
+3. Target Users
+1. Administrator
+Manages the entire platform.
+
+Can:
+- Add sensors
+- Remove sensors
+- Configure thresholds
+- Manage users
+- View system health
+- View all locations
+- Configure alerts
+2. Environmental Officer
+Uses the system for environmental analysis.
+
+Can:
+- Monitor pollution
+- Analyze trends
+- Compare locations
+- Generate reports
+- Investigate alerts
+3. Municipality / Smart City Operator
+Can:
+- Monitor city-wide environmental conditions
+- Identify pollution hotspots
+- View sensor status
+- Respond to abnormal readings
+4. Researcher
+Can:
+- Download historical datasets
+- Analyze trends
+- Compare environmental parameters
+- Use APIs
+5. Public User
+Optional public dashboard.
+
+Can see:
+- Current AQI
+- Environmental conditions
+- Pollution map
+- Historical trends
+- Public alerts
+4. System Scope
+The system should monitor:
+Air quality
+- PM2.5
+- PM10
+- CO
+- NO₂
+- SO₂
+- O₃
+- NH₃
+- VOCs
+Weather/environment
+- Temperature
+- Humidity
+- Atmospheric pressure
+- Wind speed
+- Wind direction
+- Rainfall
+- Light/solar radiation
+CPCB-related monitoring documentation also identifies meteorological parameters such as temperature, relative humidity, wind speed/direction, pressure, solar radiation and rainfall alongside air-quality parameters. app.cpcbccr.com
+5. High-Level Architecture
+┌──────────────────────────────┐
+│       ENVIRONMENT             │
+│                              │
+│ PM2.5 | PM10 | CO | NO2      │
+│ SO2   | O3   | VOC | Temp    │
+│ Humidity | Pressure | Wind   │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│       IoT SENSOR NODE         │
+│                              │
+│ ESP32 / Raspberry Pi          │
+│ Sensor Drivers                │
+│ Local Validation              │
+│ Local Buffer                  │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│       EDGE GATEWAY            │
+│                              │
+│ Data Filtering                │
+│ Aggregation                  │
+│ Anomaly Detection             │
+│ Device Health                 │
+└──────────────┬───────────────┘
+               │
+               │ 5G
+               ▼
+┌──────────────────────────────┐
+│       5G NETWORK              │
+│                              │
+│ 5G Modem / Router             │
+│ Secure Connectivity           │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│       CLOUD INGESTION         │
+│                              │
+│ MQTT Broker                   │
+│ API Gateway                  │
+│ Authentication               │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│       DATA PROCESSING         │
+│                              │
+│ Validation                    │
+│ AQI Calculation               │
+│ Aggregation                  │
+│ Anomaly Detection             │
+│ Analytics                    │
+└──────────────┬───────────────┘
+               │
+       ┌───────┴────────┐
+       ▼                ▼
+┌──────────────┐  ┌──────────────┐
+│   DATABASE   │  │ ALERT ENGINE │
+│              │  │              │
+│ Time Series  │  │ SMS/Email    │
+│ PostgreSQL   │  │ Push         │
+└──────┬───────┘  └──────────────┘
+       │
+       ▼
+┌─────────────────────────────────┐
+│       WEB DASHBOARD             │
+│                                 │
+│ Live Map | Charts | Alerts      │
+│ AQI | Sensors | Analytics       │
+│ Reports | Device Management     │
+└─────────────────────────────────┘
+
+6. Recommended Technology Stack
+Frontend
+Use:
+
+React.js + TypeScript
+
+Recommended:
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Recharts
+- Leaflet / Mapbox
+- Axios
+- React Query
+- React Router
+7. Backend
+Use:
+
+Node.js + NestJS
+
+Alternative:
+- Node.js
+- Express
+- FastAPI
+- Django
+Recommended architecture:
+NestJS
+│
+├── Auth Module
+├── User Module
+├── Device Module
+├── Sensor Module
+├── Measurement Module
+├── AQI Module
+├── Alert Module
+├── Analytics Module
+├── Report Module
+└── Admin Module
+
+8. Database
+PostgreSQL
+Use PostgreSQL for:
+- Users
+- Devices
+- Locations
+- Configuration
+- Alerts
+- Permissions
+For large time-series sensor data, use:
+TimescaleDB
+Architecture:
+PostgreSQL
+      │
+      └── TimescaleDB
+             │
+             └── Sensor Measurements
+
+9. IoT Communication
+MQTT
+Use MQTT for sensor-to-cloud communication.
+
+Example topic:
+environment/{deviceId}/telemetry
+
+Example:
+environment/ECO-001/telemetry
+
+Device status:
+environment/ECO-001/status
+
+Configuration:
+environment/ECO-001/config
+
+Alerts:
+environment/ECO-001/alerts
+
+MQTT's publish/subscribe model is particularly useful for scalable environmental IoT systems. MDPI
+10. 5G Connectivity
+The system should support:
+Primary
+5G cellular connection
+
+Possible hardware:
+- 5G USB modem
+- 5G router
+- Raspberry Pi + 5G modem
+- Industrial 5G gateway
+The sensor gateway connects to the cloud through the 5G network.
+Fallback
+If 5G is unavailable:
+5G
+ ↓
+4G
+ ↓
+Local Storage
+ ↓
+Retry Upload
+
+This makes the system more reliable.
+11. Hardware Architecture
+Prototype Version
+Controller
+ESP32
+
+or
+
+Raspberry Pi
+Sensors
+Example:
+ESP32
+ │
+ ├── PM2.5 Sensor
+ ├── PM10 Sensor
+ ├── CO Sensor
+ ├── CO2 Sensor
+ ├── Temperature Sensor
+ ├── Humidity Sensor
+ ├── Pressure Sensor
+ └── VOC Sensor
+
+Communication
+ESP32
+   ↓
+Raspberry Pi / Gateway
+   ↓
+5G Modem
+   ↓
+Cloud
+
+A research implementation of 5G environmental monitoring has similarly explored ESP32/Raspberry Pi-based sensor systems with edge processing and cloud connectivity. MDPI
+12. Sensor Data Model
+Each reading should contain:
+{
+  "deviceId": "ECO-001",
+  "timestamp": "2026-11-01T11:30:00Z",
+  "location": {
+    "latitude": 12.9716,
+    "longitude": 77.5946
+  },
+  "temperature": 28.4,
+  "humidity": 64.2,
+  "pressure": 1008.4,
+  "pm25": 42.7,
+  "pm10": 76.2,
+  "co": 0.8,
+  "no2": 24.3,
+  "so2": 8.4,
+  "o3": 32.7,
+  "voc": 0.31
+}
+
+13. Device Management
+Administrator should be able to:
+Add device
+Fields:
+Device ID
+Device Name
+Device Type
+Location
+Latitude
+Longitude
+Installation Date
+Firmware Version
+Network Type
+Sampling Interval
+Status
+
+Device statuses
+ONLINE
+OFFLINE
+WARNING
+MAINTENANCE
+ERROR
+
+Device health
+Display:
+- Battery
+- Signal strength
+- 5G connection
+- CPU usage
+- Memory
+- Last communication
+- Firmware version
+- Sensor health
+14. Real-Time Dashboard
+The dashboard should be the main screen.
+Header
+EcoSense 5G
+Environmental Intelligence Platform
+
+[Location] [Last Updated] [Profile]
+
+15. Dashboard Cards
+Top section:
+┌──────────────┐
+│ Overall AQI  │
+│     126      │
+│ MODERATE     │
+└──────────────┘
+
+┌──────────────┐
+│ PM2.5        │
+│ 42.7 µg/m³   │
+└──────────────┘
+
+┌──────────────┐
+│ Temperature  │
+│ 28.4 °C      │
+└──────────────┘
+
+┌──────────────┐
+│ Active Nodes │
+│ 42 / 45      │
+└──────────────┘
+
+16. Live Environmental Map
+Use:
+
+Leaflet / Mapbox
+
+Display sensor markers.
+
+Example:
+       🟢
+       Sensor 01
+
+                 🟠
+                 Sensor 02
+
+     🔴
+     Sensor 03
+
+Marker colors:
+Green  = Good
+Yellow = Moderate
+Orange = Poor
+Red    = Very Poor
+Dark Red = Severe
+
+India's CPCB AQI categories range from Good (0–50) through Severe (401–500), which can be used as the default visualization model for the prototype. app.cpcbccr.com
+17. Sensor Detail Page
+When the user clicks a sensor:
+Sensor ECO-001
+
+Status: ● Online
+Location: Bengaluru
+5G Signal: Excellent
+
+Current Conditions
+
+PM2.5       42.7
+PM10        76.2
+CO           0.8
+NO2         24.3
+Temperature 28.4°C
+Humidity    64%
+
+Then:
+Historical chart
+PM2.5
+
+100 ┤
+ 80 ┤       ╭─╮
+ 60 ┤   ╭───╯ ╰──╮
+ 40 ┤───╯        ╰──
+ 20 ┤
+  0 └────────────────
+     6AM  9AM 12PM 3PM
+
+Filters:
+1 Hour
+6 Hours
+24 Hours
+7 Days
+30 Days
+Custom
+
+18. Environmental Analytics
+Create an analytics section.
+
+Users can analyze:
+Pollution trends
+PM2.5
+PM10
+NO2
+SO2
+CO
+O3
+
+Weather trends
+Temperature
+Humidity
+Pressure
+Wind Speed
+Rainfall
+
+19. Location Comparison
+Allow:
+Location A vs Location B
+
+Example:
+Parameter	Location A	Location B
+PM2.5	42	67
+PM10	76	121
+CO	0.8	1.4
+Temperature	28°C	29°C
+Humidity	64%	58%
+
+
+20. AQI Calculation
+The system should calculate an AQI score based on configured standards.
+
+For India, the prototype should use CPCB's AQI methodology rather than inventing its own pollution categories. CPCB's system calculates pollutant-specific sub-indices and uses the highest relevant sub-index as the overall AQI. app.cpcbccr.com
+
+Example:
+PM2.5 sub-index = 122
+PM10 sub-index  = 94
+NO2 sub-index   = 62
+CO sub-index    = 40
+
+Overall AQI = 122
+
+Then:
+AQI = 122
+
+Category:
+MODERATE
+
+The system should keep AQI calculation configurable so that standards can be updated without rewriting application logic.
+21. Pollution Alerts
+Users can configure thresholds.
+
+Example:
+IF PM2.5 > 90 µg/m³
+THEN create alert
+
+or:
+IF AQI > 200
+THEN HIGH POLLUTION ALERT
+
+Alert levels:
+INFO
+WARNING
+CRITICAL
+EMERGENCY
+
+22. Alert Channels
+Support:
+In-app
+🔴 Critical pollution detected
+Sensor ECO-018
+AQI: 312
+
+Email
+Subject:
+Critical Environmental Alert
+
+AQI at Sensor ECO-018 has exceeded
+the configured threshold.
+
+Push notification
+Optional.
+SMS
+Optional production feature.
+23. Intelligent Anomaly Detection
+This is one of the features that can make the project much more impressive.
+
+The system should detect abnormal sensor behavior.
+
+Example:
+Normal PM2.5:
+30–60
+
+Current:
+178
+
+Expected:
+45
+
+Anomaly:
+Detected
+
+Possible algorithms:
+Simple MVP
+Z-score:
+z = (x - mean) / standard_deviation
+
+Advanced
+Use:
+- Isolation Forest
+- Moving average
+- EWMA
+- LSTM
+- Autoencoder
+For the first version, use Isolation Forest + rolling statistics.
+24. Predictive Analytics
+Optional advanced feature:
+
+Predict environmental conditions for the next:
+1 hour
+6 hours
+24 hours
+
+Example:
+Current AQI       146
+Predicted 1 hour  157
+Predicted 6 hour  178
+Predicted 24 hour 132
+
+The dashboard should clearly label predictions as predictions, not actual measurements.
+25. Pollution Hotspot Detection
+The system should identify locations with consistently high pollution.
+
+Example:
+Pollution Hotspots
+
+1. Industrial Area       🔴
+2. Highway Junction      🟠
+3. City Center           🟠
+4. Residential Area      🟢
+
+Map visualization:
+      🔴
+   🔴 🔴 🟠
+
+ 🟠       🟢
+
+      🟢
+
+26. Heatmap
+Create a pollution heatmap.
+
+Parameters:
+PM2.5
+PM10
+AQI
+NO2
+CO
+
+Time:
+Live
+Today
+Yesterday
+Last 7 Days
+Last 30 Days
+
+27. Historical Data
+Users should be able to query:
+Device
+Location
+Parameter
+Start Date
+End Date
+
+Example:
+Device: ECO-001
+Parameter: PM2.5
+From: 01 Oct
+To: 31 Oct
+
+Display:
+- Average
+- Minimum
+- Maximum
+- Standard deviation
+- Peak time
+- Number of threshold violations
+28. Report Generation
+Generate:
+PDF report
+Include:
+Environmental Monitoring Report
+
+Location
+Monitoring period
+
+Average AQI
+Maximum AQI
+Minimum AQI
+
+PM2.5 statistics
+PM10 statistics
+NO2 statistics
+
+Pollution incidents
+
+Sensor uptime
+
+Environmental observations
+
+CSV export
+timestamp
+device_id
+location
+pm25
+pm10
+co
+no2
+so2
+o3
+temperature
+humidity
+
+29. User Authentication
+Implement:
+Login
+Email
+Password
+
+Roles
+ADMIN
+ENVIRONMENT_OFFICER
+RESEARCHER
+VIEWER
+
+Use:
+- JWT
+- Refresh tokens
+- Password hashing
+- Role-based access control
+30. Security Requirements
+All device communication should be secured.
+MQTT
+Use:
+MQTTS
+
+API
+Use:
+HTTPS
+
+Authentication
+JWT
+
+Device authentication
+Each device should have:
+deviceId
+deviceSecret
+
+Production version can use certificates.
+31. Edge Computing
+Don't send every raw sensor operation directly to the cloud.
+
+The edge device should perform:
+Sensor Reading
+      ↓
+Validation
+      ↓
+Noise Filtering
+      ↓
+Aggregation
+      ↓
+Anomaly Check
+      ↓
+5G Upload
+
+Example:
+
+Sensor samples every second:
+60 readings/minute
+
+Edge calculates:
+Average
+Minimum
+Maximum
+Quality
+
+Then sends summarized data.
+
+This reduces unnecessary network traffic while preserving useful information. Edge/cloud separation is a common architectural approach for IoT environmental-monitoring systems. MDPI
+32. Offline Mode
+This is important.
+
+If the 5G network fails:
+Sensor
+ ↓
+Edge Storage
+ ↓
+5G unavailable
+ ↓
+Store locally
+ ↓
+5G restored
+ ↓
+Upload queued data
+
+Database:
+pending_measurements
+
+Each record:
+id
+timestamp
+payload
+upload_status
+retry_count
+
+33. Device Heartbeat
+Every device sends:
+heartbeat
+
+Example:
+{
+  "deviceId": "ECO-001",
+  "status": "online",
+  "battery": 87,
+  "signal": -72,
+  "firmware": "1.2.0"
+}
+
+If heartbeat hasn't arrived for:
+1 minute → warning
+5 minutes → offline
+
+Make those values configurable.
+34. Database Schema
+users
+id
+name
+email
+password_hash
+role
+created_at
+updated_at
+
+devices
+id
+device_id
+name
+location_id
+status
+firmware_version
+last_seen
+created_at
+
+locations
+id
+name
+latitude
+longitude
+address
+city
+region
+
+measurements
+id
+device_id
+timestamp
+pm25
+pm10
+co
+no2
+so2
+o3
+nh3
+voc
+temperature
+humidity
+pressure
+wind_speed
+wind_direction
+rainfall
+
+alerts
+id
+device_id
+type
+severity
+parameter
+value
+threshold
+message
+status
+created_at
+resolved_at
+
+alert_rules
+id
+parameter
+operator
+threshold
+severity
+enabled
+
+35. API Design
+Authentication
+POST /api/auth/login
+POST /api/auth/register
+POST /api/auth/refresh
+POST /api/auth/logout
+
+Devices
+GET /api/devices
+GET /api/devices/:id
+POST /api/devices
+PUT /api/devices/:id
+DELETE /api/devices/:id
+
+Measurements
+GET /api/measurements
+GET /api/measurements/:deviceId
+POST /api/measurements
+
+Analytics
+GET /api/analytics/summary
+GET /api/analytics/trends
+GET /api/analytics/hotspots
+GET /api/analytics/comparison
+
+AQI
+GET /api/aqi/current
+GET /api/aqi/:deviceId
+
+Alerts
+GET /api/alerts
+POST /api/alerts/rules
+PUT /api/alerts/rules/:id
+DELETE /api/alerts/rules/:id
+
+Reports
+POST /api/reports/generate
+GET /api/reports/:id
+
+36. MQTT Architecture
+Telemetry
+environment/{deviceId}/telemetry
+
+Device status
+environment/{deviceId}/status
+
+Heartbeat
+environment/{deviceId}/heartbeat
+
+Configuration
+environment/{deviceId}/config
+
+Commands
+environment/{deviceId}/command
+
+37. Dashboard Navigation
+Use this sidebar:
+┌─────────────────────────────┐
+│ 🌱 EcoSense 5G              │
+├─────────────────────────────┤
+│                             │
+│ ◉ Dashboard                 │
+│                             │
+│ 🗺 Live Map                 │
+│                             │
+│ 📡 Sensors                  │
+│                             │
+│ 📊 Analytics                │
+│                             │
+│ ⚠ Alerts                    │
+│                             │
+│ 📈 Reports                  │
+│                             │
+│ 🤖 Predictions              │
+│                             │
+│ 👥 Users                    │
+│                             │
+│ ⚙ Settings                 │
+│                             │
+└─────────────────────────────┘
+
+38. UI/UX Design Direction
+The application should not look like a generic admin dashboard.
+
+Use a modern:
+Smart City + Environmental Intelligence aesthetic
+Design characteristics:
+- Dark/light mode
+- Glass cards
+- Clean typography
+- Environmental map
+- Data visualization
+- Subtle gradients
+- Rounded cards
+- Minimal shadows
+- Animated live indicators
+- Status badges
+- Real-time updates
+Suggested palette:
+Primary:
+Deep Green
+
+Secondary:
+Teal
+
+Accent:
+Electric Blue
+
+Warning:
+Amber
+
+Danger:
+Red
+
+Background:
+Very Light Gray / Dark Navy
+
+39. Dashboard Layout
+Recommended:
+┌──────────────────────────────────────────────────────────┐
+│ EcoSense 5G                 🔔  ● System Healthy         │
+├────────────┬────────────┬────────────┬───────────────────┤
+│ AQI        │ PM2.5      │ Temp       │ Active Sensors   │
+│ 126        │ 42 µg/m³   │ 28.4°C     │ 42/45            │
+├────────────┴────────────┴────────────┴───────────────────┤
+│                                                          │
+│                  LIVE ENVIRONMENT MAP                    │
+│                                                          │
+│       🟢     🟠              🔴                          │
+│                                                          │
+│              🟠              🟢                           │
+│                                                          │
+├──────────────────────────────┬───────────────────────────┤
+│ AQI TREND                    │ POLLUTION ALERTS          │
+│                              │                           │
+│       📈                     │ 🔴 AQI > 300             │
+│                              │ 🟠 PM2.5 High             │
+│                              │ 🟡 Sensor Warning         │
+├──────────────────────────────┴───────────────────────────┤
+│                     SENSOR STATUS                         │
+│  ECO-001   Online   5G Excellent                         │
+│  ECO-002   Online   5G Good                              │
+│  ECO-003   Offline  —                                    │
+└──────────────────────────────────────────────────────────┘
+
+40. Real-Time Updates
+Use:
+WebSockets
+or
+Server-Sent Events
+Dashboard should update automatically when new measurements arrive.
+
+Flow:
+Sensor
+ ↓
+MQTT
+ ↓
+Backend
+ ↓
+Database
+ ↓
+WebSocket
+ ↓
+Dashboard
+
+User should not need to refresh the page.
+41. System Monitoring
+Create an admin system-health page.
+
+Show:
+API              ● Healthy
+Database         ● Healthy
+MQTT Broker      ● Healthy
+5G Gateway       ● Healthy
+Alert Service    ● Healthy
+Analytics        ● Healthy
+
+Metrics:
+Messages/minute
+Connected devices
+API response time
+MQTT latency
+Database size
+Failed messages
+
+42. 5G Performance Dashboard
+Because 5G is a core differentiator, don't hide it.
+
+Create a dedicated page:
+5G Network Analytics
+Show:
+5G Status
+Connected Devices
+Average Latency
+Upload Speed
+Download Speed
+Packet Loss
+Signal Strength
+Network Availability
+
+Example:
+5G Network
+
+● Connected
+
+Latency       12 ms
+Upload        38 Mbps
+Download      112 Mbps
+Packet Loss   0.3%
+Availability  99.7%
+
+Charts:
+- Latency over time
+- Signal strength
+- Throughput
+- Packet loss
+- Device connectivity
+43. Environmental Correlation
+Advanced analytics:
+
+Analyze relationships such as:
+Temperature ↔ PM2.5
+
+Humidity ↔ AQI
+
+Wind Speed ↔ Pollution
+
+Rainfall ↔ PM10
+
+Example:
+PM2.5 decreased significantly after rainfall.
+
+This makes the project more than simply a sensor dashboard.
+44. AI Assistant
+Optional but highly recommended.
+
+Add:
+"Ask EcoSense"
+User can ask:
+Which location had the highest PM2.5 today?
+
+or:
+Why did the AQI increase this morning?
+
+or:
+Show me pollution hotspots.
+
+Assistant can query application data and return:
+The highest PM2.5 level today was recorded at
+Industrial Area Sensor ECO-021 at 10:42 AM.
+
+PM2.5:
+142 µg/m³
+
+Keep AI responses grounded in stored measurements.
+45. Notifications Center
+Create:
+Notifications
+
+🔴 Critical
+AQI exceeded 300 at Sensor ECO-021.
+
+🟠 Warning
+PM2.5 exceeded configured threshold.
+
+🟡 Device
+ECO-014 hasn't reported for 5 minutes.
+
+🔵 System
+Firmware update available.
+
+46. Settings
+Sections:
+General
+Organization
+Timezone
+Units
+Language
+
+AQI
+AQI Standard
+Pollutant thresholds
+Update frequency
+
+Alerts
+Email
+Push
+SMS
+Thresholds
+
+Devices
+Sampling interval
+Heartbeat interval
+Offline timeout
+
+47. Non-Functional Requirements
+Performance
+Dashboard should load within:
+
+< 3 seconds
+
+API:
+
+< 500 ms for common requests under normal prototype load.
+
+Real-time sensor data:
+
+near-real-time, with latency monitored explicitly rather than promising a fixed value.
+48. Scalability
+Initial:
+10–50 sensors
+
+Target architecture:
+100
+ ↓
+1,000
+ ↓
+10,000+
+
+Use:
+- MQTT
+- Message queues
+- Horizontal backend scaling
+- Time-series database
+- Caching
+- Background workers
+49. Reliability
+Target:
+Automatic retry
+Offline buffering
+Duplicate detection
+Data validation
+Device heartbeat
+Health monitoring
+
+50. Data Validation
+Reject:
+Negative PM2.5
+Humidity > 100%
+Temperature = impossible value
+Invalid GPS coordinates
+Future timestamps
+Duplicate readings
+
+Mark suspicious readings instead of silently deleting them.
+
+Example:
+measurement_quality:
+VALID
+SUSPECT
+INVALID
+
+51. Data Retention
+Example:
+Raw data:
+90 days
+
+Hourly aggregates:
+2 years
+
+Daily aggregates:
+5+ years
+
+Make retention configurable.
+52. Testing Strategy
+Unit Testing
+Test:
+- AQI calculation
+- Authentication
+- Alert rules
+- Data validation
+- Analytics
+Integration Testing
+Test:
+Sensor → MQTT → Backend → DB
+
+API Testing
+Use:
+
+Postman
+Frontend Testing
+Use:
+
+Vitest + React Testing Library
+End-to-End
+Use:
+
+Playwright
+53. Hardware Testing
+Test:
+Sensor accuracy
+Compare prototype readings with a trusted/reference monitoring source where possible.
+Network
+Test:
+5G connected
+5G disconnected
+5G reconnect
+
+Power
+Test:
+Normal
+Low battery
+Power restart
+
+Environmental
+Test:
+Temperature changes
+Humidity changes
+High particulate event
+
+54. Security Testing
+Test:
+- Invalid JWT
+- Expired token
+- Unauthorized API
+- MQTT authentication
+- SQL injection
+- XSS
+- Rate limiting
+- Device impersonation
+- Invalid sensor payload
+55. Project Phases
+Phase 1 — Planning
+Create:
+- Requirements
+- Architecture
+- Database design
+- UI wireframes
+Phase 2 — Frontend
+Build:
+Login
+Dashboard
+Live Map
+Sensors
+Sensor Details
+Analytics
+Alerts
+Reports
+Settings
+
+Phase 3 — Backend
+Build:
+Authentication
+Users
+Devices
+Measurements
+AQI
+Alerts
+Analytics
+Reports
+
+Phase 4 — IoT
+Build:
+ESP32
+Sensors
+MQTT
+Gateway
+Data validation
+
+Phase 5 — 5G
+Connect:
+Gateway
+ ↓
+5G
+ ↓
+Cloud
+
+Measure:
+- Latency
+- Throughput
+- Packet loss
+- Availability
+Phase 6 — Analytics
+Implement:
+AQI
+Charts
+Hotspots
+Anomaly detection
+Correlation
+Predictions
+
+Phase 7 — Alerts
+Implement:
+Threshold alerts
+Device alerts
+AQI alerts
+Email
+Push
+
+Phase 8 — Testing
+Perform:
+Unit testing
+Integration testing
+IoT testing
+5G testing
+Security testing
+Performance testing
+
+56. MVP
+If you want to build the project without getting overwhelmed, your MVP should contain:
+Hardware
+- ESP32
+- PM2.5/PM10 sensor
+- Temperature/humidity sensor
+- 5G gateway
+Backend
+- Node.js
+- PostgreSQL
+- MQTT
+Frontend
+- React
+- Dashboard
+- Live map
+- Sensor page
+- Charts
+Core functionality
+Sensor
+ ↓
+ESP32
+ ↓
+MQTT
+ ↓
+5G
+ ↓
+Backend
+ ↓
+Database
+ ↓
+Dashboard
+
+Then add:
+AQI
+ ↓
+Alerts
+ ↓
+Analytics
+ ↓
+Anomaly detection
+ ↓
+Prediction
+
+57. Advanced Version
+For a standout final-year/portfolio project, add:
+AI
+- Pollution prediction
+- Anomaly detection
+- Pollution hotspot prediction
+- Natural-language environmental assistant
+IoT
+- OTA firmware updates
+- Device provisioning
+- Remote configuration
+- Sensor calibration management
+5G
+- Network-performance dashboard
+- Edge processing
+- Network failover
+- Latency monitoring
+GIS
+- Heatmaps
+- Geofencing
+- Pollution zones
+- Location comparison
+58. Example End-to-End Flow
+Suppose a sensor detects:
+PM2.5 = 125 µg/m³
+
+The process should be:
+1. Sensor measures PM2.5
+
+        ↓
+
+2. ESP32 validates reading
+
+        ↓
+
+3. Edge gateway receives reading
+
+        ↓
+
+4. Edge performs filtering
+
+        ↓
+
+5. Gateway sends MQTT message
+
+        ↓
+
+6. 5G transports message
+
+        ↓
+
+7. MQTT broker receives message
+
+        ↓
+
+8. Backend validates payload
+
+        ↓
+
+9. Database stores measurement
+
+        ↓
+
+10. AQI engine calculates index
+
+        ↓
+
+11. Alert engine checks threshold
+
+        ↓
+
+12. WebSocket broadcasts update
+
+        ↓
+
+13. Dashboard updates instantly
+
+        ↓
+
+14. If threshold exceeded:
+    notification is generated
+
+59. Recommended Folder Structure
+ecosense-5g/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── layouts/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── charts/
+│   │   ├── maps/
+│   │   └── utils/
+│   │
+│   └── package.json
+│
+├── backend/
+│   ├── src/
+│   │   ├── auth/
+│   │   ├── users/
+│   │   ├── devices/
+│   │   ├── measurements/
+│   │   ├── aqi/
+│   │   ├── alerts/
+│   │   ├── analytics/
+│   │   ├── reports/
+│   │   ├── mqtt/
+│   │   └── websocket/
+│   │
+│   └── package.json
+│
+├── iot/
+│   ├── esp32/
+│   ├── gateway/
+│   └── sensor-config/
+│
+├── ml/
+│   ├── anomaly_detection/
+│   ├── prediction/
+│   └── datasets/
+│
+├── infrastructure/
+│   ├── docker/
+│   ├── mqtt/
+│   └── database/
+│
+├── docs/
+│   ├── architecture/
+│   ├── api/
+│   └── diagrams/
+│
+└── README.md
+
+60. Docker Architecture
+Use Docker Compose for development:
+docker-compose
+│
+├── frontend
+├── backend
+├── postgres
+├── timescaledb
+├── mqtt-broker
+├── redis
+└── nginx
+
+Optional:
+Prometheus
+Grafana
+
+for infrastructure monitoring.
+61. Deliverables
+Your completed project should contain:
+Software
+- Responsive web dashboard
+- REST API
+- MQTT infrastructure
+- Authentication
+- Database
+- Real-time monitoring
+- Analytics
+- Alerts
+- Reports
+Hardware
+- Sensor node
+- Edge gateway
+- 5G connectivity
+- Environmental sensors
+Documentation
+- SRS
+- PRD
+- Architecture diagram
+- Database ER diagram
+- API documentation
+- Hardware diagram
+- Deployment guide
+- Testing report
+- User manual
+Presentation
+Prepare:
+Problem
+ ↓
+Existing limitations
+ ↓
+Proposed solution
+ ↓
+Architecture
+ ↓
+5G advantage
+ ↓
+IoT sensors
+ ↓
+Dashboard
+ ↓
+Analytics
+ ↓
+Demo
+ ↓
+Results
+ ↓
+Future scope
+
+62. Success Criteria
+The project is considered complete when:
+- [ ] User can log in.
+- [ ] Admin can register sensors.
+- [ ] Sensors can transmit measurements.
+- [ ] Measurements reach the backend over the network.
+- [ ] 5G connectivity is demonstrated.
+- [ ] MQTT communication works.
+- [ ] Measurements are stored.
+- [ ] Dashboard displays live readings.
+- [ ] Map displays sensor locations.
+- [ ] AQI is calculated.
+- [ ] Historical charts work.
+- [ ] Alerts are generated.
+- [ ] Offline sensor data is recovered.
+- [ ] Device health is visible.
+- [ ] Reports can be generated.
+- [ ] CSV export works.
+- [ ] Anomaly detection works.
+- [ ] System is responsive on desktop/tablet/mobile.
+- [ ] Authentication and authorization work.
+- [ ] API documentation exists.
+- [ ] Deployment documentation exists.
+63. What Makes This Project Impressive
+Don't present it simply as:
+"An IoT pollution monitoring project."
+
+Present it as:
+"A 5G-enabled Environmental Intelligence Platform combining IoT sensing, edge computing, real-time streaming, geospatial analytics, AI anomaly detection, predictive analytics, and automated environmental alerts."
+
+That positioning makes the project considerably stronger for a final-year project, portfolio, hackathon, or smart-city prototype.
+
+Also, avoid claiming that a prototype sensor is regulatory-grade. India's official monitoring ecosystem uses specialized continuous monitoring equipment and defined measurement/QA procedures; your prototype should clearly distinguish demonstration/IoT measurements from certified regulatory monitoring. Mausam
+Recommended build order
+Start with this exact sequence:
+1. UI/UX
+      ↓
+2. Database
+      ↓
+3. Backend API
+      ↓
+4. MQTT broker
+      ↓
+5. ESP32 sensor node
+      ↓
+6. 5G connectivity
+      ↓
+7. Real-time dashboard
+      ↓
+8. AQI engine
+      ↓
+9. Alerts
+      ↓
+10. Analytics
+      ↓
+11. AI anomaly detection
+      ↓
+12. Prediction
+      ↓
+13. Reports
+      ↓
+14. Security
+      ↓
+15. Deployment
+
+This gives you a complete end-to-end project, rather than building the dashboard first and leaving the actual 5G/IoT portion as a mockup.

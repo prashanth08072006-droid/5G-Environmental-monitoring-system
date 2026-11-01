@@ -1,0 +1,302 @@
+{
+  "users": [
+    {
+      "id": "user_demo_1",
+      "name": "Isaac Newton",
+      "email": "isaac@example.com",
+      "password_hash": "740c975774d761a62372f74f38900b6e:f56c0490784f9d446cce48dd7c0ab271f976b80d91d436a8a1d25a2e90bec8dab297f6b213787925fa12e954363837284a21da3b9c07d07ae2134cfaef8d9604",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1",
+      "user_id": "user_demo_1",
+      "title": "Build React Authentication System",
+      "description": "Implement JWT user registration, login forms, and protected route wrappers.",
+      "status": "OVERDUE",
+      "priority": "HIGH",
+      "category_id": "cat_dev",
+      "due_date": "2026-09-25",
+      "due_time": "18:00",
+      "is_important": true,
+      "notes": "Use JWT authentication with validation & password hashing.",
+      "tags": [
+        "react",
+        "backend",
+        "security"
+      ],
+      "subtasks": [
+        {
+          "id": "st_1",
+          "task_id": "task_1",
+          "title": "Create login UI",
+          "completed": true,
+          "created_at": "2026-09-25T16:41:06.244Z"
+        },
+        {
+          "id": "st_2",
+          "task_id": "task_1",
+          "title": "Create API endpoints",
+          "completed": true,
+          "created_at": "2026-09-25T16:41:06.244Z"
+        },
+        {
+          "id": "st_3",
+          "task_id": "task_1",
+          "title": "Add JWT Middleware",
+          "completed": false,
+          "created_at": "2026-09-25T16:41:06.244Z"
+        }
+      ],
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z"
+    },
+    {
+      "id": "task_2",
+      "user_id": "user_demo_1",
+      "title": "Review 5G Cellular Network Documentation",
+      "description": "Read chapter 4 on beamforming and massive MIMO spectral efficiency.",
+      "status": "OVERDUE",
+      "priority": "MEDIUM",
+      "category_id": "cat_study",
+      "due_date": "2026-09-25",
+      "due_time": "20:30",
+      "is_important": true,
+      "tags": [
+        "telecom",
+        "study"
+      ],
+      "subtasks": [],
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z"
+    },
+    {
+      "id": "task_3",
+      "user_id": "user_demo_1",
+      "title": "Weekly grocery shopping list",
+      "description": "Buy organic vegetables, fruits, almond milk, and whole wheat bread.",
+      "status": "COMPLETED",
+      "priority": "LOW",
+      "category_id": "cat_shopping",
+      "due_date": "2026-09-24",
+      "due_time": "12:00",
+      "is_important": false,
+      "tags": [
+        "shopping",
+        "home"
+      ],
+      "subtasks": [],
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z",
+      "completed_at": "2026-09-25T16:41:06.244Z"
+    },
+    {
+      "id": "task_4",
+      "user_id": "user_demo_1",
+      "title": "Submit Math Assignment 3",
+      "description": "Upload solutions for differential equations problem set.",
+      "status": "OVERDUE",
+      "priority": "HIGH",
+      "category_id": "cat_study",
+      "due_date": "2026-09-24",
+      "due_time": "17:00",
+      "is_important": true,
+      "tags": [
+        "college",
+        "math"
+      ],
+      "subtasks": [],
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z"
+    },
+    {
+      "id": "task_5",
+      "user_id": "user_demo_1",
+      "title": "Sprint Planning & Team Sync",
+      "description": "Discuss Q3 deliverables and assign tickets to team members.",
+      "status": "OVERDUE",
+      "priority": "MEDIUM",
+      "category_id": "cat_work",
+      "due_date": "2026-09-26",
+      "due_time": "10:00",
+      "is_important": false,
+      "tags": [
+        "work",
+        "meeting"
+      ],
+      "subtasks": [],
+      "created_at": "2026-09-25T16:41:06.244Z",
+      "updated_at": "2026-09-25T16:41:06.244Z"
+    },
+    {
+      "id": "task_5g_1793512970885_1",
+      "user_id": "user_demo_1",
+      "title": "Calibrate 64T64R Massive MIMO Digital Beamforming Weight Vectors",
+      "description": "Verify steering angles (-60 to +60 deg) and side-lobe suppression for 5G NR n78 band.",
+      "status": "IN_PROGRESS",
+      "priority": "HIGH",
+      "category_id": "cat_5g",
+      "due_date": "2026-11-01",
+      "due_time": "16:00",
+      "is_important": true,
+      "tags": [
+        "5g",
+        "massive-mimo",
+        "beamforming"
+      ],
+      "subtasks": [
+        {
+          "id": "st_5g_1",
+          "task_id": "task_5g_1",
+          "title": "Compute Array Factor for 64-element planar array",
+          "completed": true,
+          "created_at": "2026-11-01T06:02:50.885Z"
+        },
+        {
+          "id": "st_5g_2",
+          "task_id": "task_5g_1",
+          "title": "Measure SINR improvement with zero-forcing precoding",
+          "completed": false,
+          "created_at": "2026-11-01T06:02:50.885Z"
+        }
+      ],
+      "created_at": "2026-11-01T06:02:50.885Z",
+      "updated_at": "2026-11-01T06:02:50.885Z"
+    },
+    {
+      "id": "task_5g_1793512970885_2",
+      "user_id": "user_demo_1",
+      "title": "Deploy 5G NR Rel-16 Network Slicing for URLLC and eMBB",
+      "description": "Configure QoS Flow parameters (5QI = 82 for URLLC, packet delay budget < 10ms, packet error rate 10^-5).",
+      "status": "TODO",
+      "priority": "HIGH",
+      "category_id": "cat_5g",
+      "due_date": "2026-11-02",
+      "due_time": "14:30",
+      "is_important": true,
+      "tags": [
+        "5g",
+        "slicing",
+        "urllc",
+        "embb"
+      ],
+      "subtasks": [
+        {
+          "id": "st_5g_3",
+          "task_id": "task_5g_2",
+          "title": "Set up S-NSSAI slice descriptors in 5G Core AMF/SMF",
+          "completed": false,
+          "created_at": "2026-11-01T06:02:50.885Z"
+        },
+        {
+          "id": "st_5g_4",
+          "task_id": "task_5g_2",
+          "title": "Test end-to-end packet latency with ping and iperf3",
+          "completed": false,
+          "created_at": "2026-11-01T06:02:50.885Z"
+        }
+      ],
+      "created_at": "2026-11-01T06:02:50.885Z",
+      "updated_at": "2026-11-01T06:02:50.885Z"
+    },
+    {
+      "id": "task_5g_1793512970885_3",
+      "user_id": "user_demo_1",
+      "title": "3GPP TR 38.901 Urban Macro Path Loss Drive Test Validation",
+      "description": "Collect RSRP and RSRQ measurements across 500m cell radius in C-Band (3.5 GHz).",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "category_id": "cat_5g",
+      "due_date": "2026-11-02",
+      "due_time": "18:00",
+      "is_important": false,
+      "tags": [
+        "5g",
+        "rf-engineering",
+        "pathloss"
+      ],
+      "subtasks": [],
+      "created_at": "2026-11-01T06:02:50.885Z",
+      "updated_at": "2026-11-01T06:02:50.885Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_study",
+      "name": "Study",
+      "icon": "📚",
+      "color": "#3B82F6",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.241Z"
+    },
+    {
+      "id": "cat_work",
+      "name": "Work",
+      "icon": "💼",
+      "color": "#8B5CF6",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_personal",
+      "name": "Personal",
+      "icon": "🏠",
+      "color": "#EC4899",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_shopping",
+      "name": "Shopping",
+      "icon": "🛒",
+      "color": "#F59E0B",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_dev",
+      "name": "Development",
+      "icon": "💻",
+      "color": "#10B981",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_health",
+      "name": "Health",
+      "icon": "❤️",
+      "color": "#EF4444",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_finance",
+      "name": "Finance",
+      "icon": "💰",
+      "color": "#06B6D4",
+      "is_default": true,
+      "created_at": "2026-09-25T16:41:06.242Z"
+    },
+    {
+      "id": "cat_5g",
+      "name": "5G Telecom",
+      "icon": "📡",
+      "color": "#6366F1",
+      "is_default": true,
+      "created_at": "2026-11-01T06:01:12.323Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_1",
+      "user_id": "user_demo_1",
+      "type": "DAILY_SUMMARY",
+      "message": "Good Morning! You have 3 tasks scheduled for today.",
+      "is_read": false,
+      "created_at": "2026-09-25T16:41:06.244Z"
+    }
+  ]
+}
