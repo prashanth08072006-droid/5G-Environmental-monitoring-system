@@ -1,0 +1,26 @@
+{
+  "name": "5g-environmental-monitoring-system",
+  "version": "1.0.0",
+  "description": "5G Environmental Monitoring & CPCB NAQI Real-Time Intelligence Platform",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "backend": "node backend/src/server.js",
+    "build": "echo 'Build complete: Static SPA & Zero-dependency Node backend ready for Render'"
+  },
+  "keywords": [
+    "5g",
+    "urllc",
+    "environmental-monitoring",
+    "aqi",
+    "cpcb-naqi",
+    "iot",
+    "esp32",
+    "machine-learning"
+  ],
+  "author": "prashanth08072006-droid",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
