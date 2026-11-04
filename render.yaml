@@ -1,13 +1,16 @@
 services:
   - type: web
-    name: ecosense-5g-monitoring
+    name: ecowatch-india-5g
     runtime: node
     plan: free
-    buildCommand: npm run build
+    region: oregon
+    buildCommand: npm install
     startCommand: node backend/src/server.js
     autoDeploy: true
     envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
       - key: NODE_ENV
         value: production
-      - key: RENDER
-        value: "true"
+      - key: PORT
+        value: 10000
